@@ -1,14 +1,15 @@
 import sys
 import os
 import json
-from profile import main as analyze_main
+from profile_log import main as analyze_main
 
 def main():
     if len(sys.argv) < 2:
-        print(f"Usage: python3 {sys.argv[0]} <log1.txt> <log2.txt> ...")
+        print(f"Usage: python3 {sys.argv[0]} <log1.txt> <log2.txt> <output_path> ...")
         sys.exit(1)
 
-    log_paths = sys.argv[1:]
+    log_paths = sys.argv[1:-1]    
+    output_path = sys.argv[-1]
 
     all_dicts = []
     column_labels = []
@@ -66,8 +67,10 @@ def main():
     for key in custom_order:
         results["data"][key] = [d.get(key, None) for d in all_dicts]
     
-    with open("comparison_results.json", "w") as f:
+    with open(output_path, "w") as f:
         json.dump(results, f, indent=4)
+        
+    print(f"Comparison results saved to {output_path}")
 
 if __name__ == "__main__":
     main()

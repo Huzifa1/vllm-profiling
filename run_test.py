@@ -40,12 +40,14 @@ def build_command(base_params, combination, config_dir):
         output_file = f"output_{'_'.join(output_suffix)}.txt"
     output_file = os.path.join(config_dir, output_file)
     full_cmd = f"{' '.join(shlex.quote(arg) for arg in command)} | tee {shlex.quote(output_file)}"
-    return full_cmd
+    return full_cmd, output_file
 
 def main():
     if len(sys.argv) != 2:
         print(f"Usage: python3 {sys.argv[0]} <config_file.json>")
         sys.exit(1)
+        
+    output_files = []
 
     config_file = sys.argv[1]
     config_dir = os.path.dirname(os.path.abspath(config_file))
@@ -62,7 +64,8 @@ def main():
 
     if not tuned_params:
         # No arrays: run once
-        cmd = build_command(static_params, {}, config_dir)
+        cmd, output_file = build_command(static_params, {}, config_dir)
+        output_files.append(output_file)
         clear_cache()
         print("Running:", cmd)
         subprocess.run(cmd, shell=True, check=True)
@@ -74,10 +77,19 @@ def main():
 
     for values in tuned_values:
         combination = dict(zip(tuned_keys, values))
-        cmd = build_command({**static_params, **combination}, combination, config_dir)
+        cmd, output_file = build_command({**static_params, **combination}, combination, config_dir)
+        output_files.append(output_file)
         clear_cache()
         print("Running:", cmd)
         subprocess.run(cmd, shell=True, check=True)
+
+    # Run compare_logs.py on all output files
+    compare_script = os.path.join(os.path.dirname(__file__), "compare_logs.py")
+    compare_cmd = ["python3", compare_script] + output_files + [os.path.join(config_dir, "comparison_results.json")]
+    if not os.path.exists(os.path.dirname(compare_cmd[-1])):
+        os.makedirs(os.path.dirname(compare_cmd[-1]))
+    print("Comparing logs...")
+    subprocess.run(compare_cmd, check=True)
 
 if __name__ == "__main__":
     main()
