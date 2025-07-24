@@ -19,7 +19,6 @@ def main(file_name):
         "torch.compile": None,
         "kv_cache_profiling": None,
         "graph_capturing": None,
-        "kv_cache_init": None,
         "init_engine": None,
         "tokenizer_init": None,
         "total_time": 0,
@@ -71,10 +70,6 @@ def main(file_name):
         elif "Memory profiling takes" in line:
             s = extract_time(line, r"takes ([\d.]+) seconds")
             profiling_results["kv_cache_profiling"] = s
-
-        elif "Initializing KV Cache took" in line:
-            s = extract_time(line, r"took ([\d.]+) seconds")
-            profiling_results["kv_cache_init"] = s
 
         elif "Init Tokenizer took" in line:
             s = extract_time(line, r"took ([\d.]+) seconds")
