@@ -16,7 +16,7 @@ pip install vllm==0.9.2
 python3 apply_vllm_changes.py
 ```
 
-4) Create `env.json` file. Currently there is an example in `examples/model_size/env.json`. The file show follow the following format:
+4) Create `env.json` file. Currently there is an example in `examples/model_size/env.json`. The file should follow the following format:
 ```json
 {
     "env": {
@@ -31,7 +31,7 @@ python3 apply_vllm_changes.py
 
 When running vllm, all environment variables in `env` will be set, and all flags in `params` will be passed to vllm.
 
-If the flag value is an array, vllm will run for every value. If there are multiple array values, vllm will run for all possible combinations
+If the flag value is an array, vllm will run for every value. If there are multiple array values, vllm will run for all possible combinations.
 
 5) Run tests:
 
