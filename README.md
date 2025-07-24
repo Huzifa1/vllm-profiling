@@ -3,6 +3,7 @@
 1) Clone the repo:
 ```bash
 git clone https://github.com/Huzifa1/vllm-profiling.git
+cd vllm-profiling
 ```
 
 2) Install vllm:
@@ -12,8 +13,7 @@ pip install vllm==0.9.2
 
 3) Apply custom vllm changes (addition of profiling logs):
 ```bash
-python3 apply_vllm_changes.py path/to/site-packages/vllm
-# e.g. /home/user/.local/lib/python3.11/site-packages/vllm
+python3 apply_vllm_changes.py
 ```
 
 4) Create `env.json` file. Currently there is an example in `examples/model_size/env.json`. The file show follow the following format:

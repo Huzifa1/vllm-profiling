@@ -13,8 +13,12 @@ def apply_vllm_changes(vllm_path):
     print(f"Changes applied!")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python apply_vllm_changes.py <vllm_path>")
+    try:
+        import vllm
+        import os
+        vllm_path = os.path.dirname(vllm.__file__)
+    except ImportError:
+        print("Error: 'vllm' is not installed.")
         sys.exit(1)
-    vllm_path = sys.argv[1]
+        
     apply_vllm_changes(vllm_path)
