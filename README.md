@@ -7,10 +7,16 @@ git clone https://github.com/Huzifa1/vllm-profiling.git
 
 2) Install vllm:
 ```bash
-pip install vllm
+pip install vllm==0.9.2
 ```
 
-3) Create `env.json` file. Currently there is an example in `examples/model_size/env.json`. The file show follow the following format:
+3) Apply custom vllm changes (addition of profiling logs):
+```bash
+python3 apply_vllm_changes.py path/to/site-packages/vllm
+# e.g. /home/user/.local/lib/python3.11/site-packages/vllm
+```
+
+4) Create `env.json` file. Currently there is an example in `examples/model_size/env.json`. The file show follow the following format:
 ```json
 {
     "env": {
@@ -27,7 +33,7 @@ When running vllm, all environment variables in `env` will be set, and all flags
 
 If the flag value is an array, vllm will run for every value. If there are multiple array values, vllm will run for all possible combinations
 
-4) Run tests:
+5) Run tests:
 
 ```bash
 python3 run_test.py path/to/env.json
