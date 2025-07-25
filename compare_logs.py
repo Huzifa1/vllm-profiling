@@ -40,7 +40,6 @@ def main():
         "torch.compile",
         "kv_cache_profiling",
         "graph_capturing",
-        "kv_cache_init",
         "init_engine",
         "tokenizer_init",
         "total_time",
@@ -51,7 +50,7 @@ def main():
     for key in custom_order:
         row = [key]
         for d in all_dicts:
-            val = d.get(key, "N/A")
+            val = d.get(key, None)
             if val is None:
                 v = "--"
             else:
