@@ -4,7 +4,7 @@ import subprocess
 import shlex
 import sys
 from itertools import product
-
+from time import sleep
 from utils import clear_cache
 
 
@@ -89,6 +89,7 @@ def main():
     if not os.path.exists(os.path.dirname(compare_cmd[-1])):
         os.makedirs(os.path.dirname(compare_cmd[-1]))
     print("Comparing logs...")
+    sleep(3)  # Give some time for the previous commands to finish
     subprocess.run(compare_cmd, check=True)
 
 if __name__ == "__main__":

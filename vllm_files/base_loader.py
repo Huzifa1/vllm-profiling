@@ -6,12 +6,12 @@ import torch
 import torch.nn as nn
 
 from vllm.config import LoadConfig, ModelConfig, VllmConfig
+from vllm.logger import init_logger
 from vllm.model_executor.model_loader.utils import (
     initialize_model, process_weights_after_loading, set_default_torch_dtype)
-from vllm.logger import init_logger
 import time
-
 logger = init_logger(__name__)
+
 
 class BaseModelLoader(ABC):
     """Base class for model loaders."""
@@ -35,7 +35,10 @@ class BaseModelLoader(ABC):
                    model_config: ModelConfig) -> nn.Module:
         """Load a model with the given configurations."""
         device_config = vllm_config.device_config
-        target_device = torch.device(device_config.device)
+        load_config = vllm_config.load_config
+        load_device = device_config.device if load_config.device is None else \
+                      load_config.device
+        target_device = torch.device(load_device)
         with set_default_torch_dtype(model_config.dtype):
             with target_device:
                 initialize_model_before_time = time.perf_counter()
@@ -43,6 +46,8 @@ class BaseModelLoader(ABC):
                                          model_config=model_config)
                 initialize_model_after_time = time.perf_counter()
                 logger.info("NEW: Initializing Model took %.2f seconds",initialize_model_after_time - initialize_model_before_time)
+
+            logger.debug("Loading weights on %s ...", load_device)
             # Quantization does not happen in `load_weights` but after it
             self.load_weights(model, model_config)
             process_weights_after_loading(model, model_config, target_device)
