@@ -1,0 +1,156 @@
+{
+    "qwen-0.5b": {
+        "size": 0.5,
+        "layers": 24,
+        "attn_heads": 16,
+        "attn_heads_num": 16,
+        "hidden_size": 1024,
+        "ffn_dim": 2816,
+        "vocab_size": 151936,
+        "tokenizer_size": 6.8,
+        "compiled_graph_size": 19
+    },
+    "qwen-1.8b": {
+        "size": 1.8,
+        "layers": 24,
+        "attn_heads": 16,
+        "attn_heads_num": 16,
+        "hidden_size": 2048,
+        "ffn_dim": 5504,
+        "vocab_size": 151936,
+        "tokenizer_size": 6.8,
+        "compiled_graph_size": 20
+    },
+    "qwen-4b": {
+        "size": 4,
+        "layers": 40,
+        "attn_heads": 20,
+        "attn_heads_num": 20,
+        "hidden_size": 2560,
+        "ffn_dim": 6912,
+        "vocab_size": 151936,
+        "tokenizer_size": 6.8,
+        "compiled_graph_size": 20
+    },
+    "qwen-7b": {
+        "size": 7,
+        "layers": 32,
+        "attn_heads": 32,
+        "attn_heads_num": 32,
+        "hidden_size": 4096,
+        "ffn_dim": 11008,
+        "vocab_size": 151936,
+        "tokenizer_size": 6.8,
+        "compiled_graph_size": 33
+    },
+    "qwen-14b": {
+        "size": 14,
+        "layers": 40,
+        "attn_heads": 40,
+        "attn_heads_num": 40,
+        "hidden_size": 5120,
+        "ffn_dim": 13696,
+        "vocab_size": 152064,
+        "tokenizer_size": 6.8,
+        "compiled_graph_size": 33
+    },
+    "llama2-7b-hf": {
+        "size": 7,
+        "layers": 32,
+        "attn_heads": 32,
+        "attn_heads_num": 32,
+        "hidden_size": 4096,
+        "ffn_dim": 11008,
+        "vocab_size": 32000,
+        "tokenizer_size": 1.8,
+        "compiled_graph_size": 20
+    },
+    "llama2-13b-hf": {
+        "size": 13,
+        "layers": 40,
+        "attn_heads": 40,
+        "attn_heads_num": 40,
+        "hidden_size": 5120,
+        "ffn_dim": 13824,
+        "vocab_size": 32000,
+        "tokenizer_size": 1.8,
+        "compiled_graph_size": 20
+    },
+    "llama3-3b": {
+        "size": 3,
+        "layers": 28,
+        "attn_heads": 8,
+        "attn_heads_num": 24,
+        "hidden_size": 3072,
+        "ffn_dim": 8192,
+        "vocab_size": 128256,
+        "tokenizer_size": 8.7,
+        "compiled_graph_size": 24
+    },
+    "falcon-7b": {
+        "size": 7,
+        "layers": 32,
+        "attn_heads": 1,
+        "attn_heads_num": 71,
+        "hidden_size": 4544,
+        "ffn_dim": 18176,
+        "vocab_size": 65024,
+        "tokenizer_size": 2.7,
+        "compiled_graph_size": 24
+    },
+    "falcon-11b": {
+        "size": 11,
+        "layers": 60,
+        "attn_heads": 8,
+        "attn_heads_num": 32,
+        "hidden_size": 4096,
+        "ffn_dim": 16384,
+        "vocab_size": 65024,
+        "tokenizer_size": 2.7,
+        "compiled_graph_size": 24
+    },
+    "yi-6b": {
+        "size": 6,
+        "layers": 32,
+        "attn_heads": 4,
+        "attn_heads_num": 32,
+        "hidden_size": 4096,
+        "ffn_dim": 11008,
+        "vocab_size": 64000,
+        "tokenizer_size": 3.5,
+        "compiled_graph_size": 36
+    },
+    "yi-9b": {
+        "size": 9,
+        "layers": 48,
+        "attn_heads": 4,
+        "attn_heads_num": 32,
+        "hidden_size": 4096,
+        "ffn_dim": 11008,
+        "vocab_size": 64000,
+        "tokenizer_size": 3.5,
+        "compiled_graph_size": 24
+    },
+    "mpt-7b": {
+        "size": 7,
+        "layers": 32,
+        "attn_heads": 32,
+        "attn_heads_num": 32,
+        "hidden_size": 4096,
+        "ffn_dim": 16384,
+        "vocab_size": 50432,
+        "tokenizer_size": 2.1,
+        "compiled_graph_size": 13
+    },
+    "mistral-7b": {
+        "size": 7,
+        "layers": 32,
+        "attn_heads": 8,
+        "attn_heads_num": 32,
+        "hidden_size": 4096,
+        "ffn_dim": 14336,
+        "vocab_size": 32000,
+        "tokenizer_size": 1.8,
+        "compiled_graph_size": 24
+    }
+}
