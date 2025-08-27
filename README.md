@@ -8,7 +8,7 @@ cd vllm-profiling
 
 2) Install vllm:
 ```bash
-pip install vllm==0.10.0
+pip install vllm==0.10.1.1
 ```
 
 3) Apply custom vllm changes (addition of profiling logs):
