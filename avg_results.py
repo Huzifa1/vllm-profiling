@@ -5,7 +5,7 @@ import sys
 
 # Path to the iterations directory
 if len(sys.argv) < 2:
-    print("Usage: python visualize.py <iterations_dir_path>")
+    print("Usage: python avg_results.py <iterations_dir_path>")
     sys.exit(1)
     
 base_dir = sys.argv[1]

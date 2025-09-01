@@ -5,7 +5,6 @@ import shlex
 import sys
 from itertools import product
 from time import sleep
-from utils import clear_cache
 
 
 def is_array(val):
@@ -66,7 +65,6 @@ def main():
         # No arrays: run once
         cmd, output_file = build_command(static_params, {}, config_dir)
         output_files.append(output_file)
-        clear_cache()
         print("Running:", cmd)
         subprocess.run(cmd, shell=True, check=True)
         return
@@ -79,7 +77,6 @@ def main():
         combination = dict(zip(tuned_keys, values))
         cmd, output_file = build_command({**static_params, **combination}, combination, config_dir)
         output_files.append(output_file)
-        clear_cache()
         print("Running:", cmd)
         subprocess.run(cmd, shell=True, check=True)
 

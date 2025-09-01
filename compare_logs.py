@@ -19,8 +19,6 @@ def main():
             parsed = analyze_main(path)
             all_dicts.append(parsed)
             column_labels.append(os.path.basename(path))
-            # Sort labels alphabetically
-            column_labels.sort()
         except Exception as e:
             print(f"Error parsing {path}: {e}")
             continue
