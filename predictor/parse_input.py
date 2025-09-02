@@ -43,6 +43,8 @@ def parse_input(avg_comparison_results_path, models_config_path):
     
     with open("predictor_input.json", "w") as f:
         json.dump(output, f, indent=4)
+        
+    print("predictor_input.json has been created successfully!")
     
 
 if __name__ == "__main__":

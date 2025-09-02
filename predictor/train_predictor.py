@@ -39,10 +39,13 @@ def predict_graph_capturing_time():
     
     joblib.dump(model_graph, f"{models_output_dir}/graph_capturing.pkl")
 
+if __name__ == "__main__":
 
-predict_metric_wrt_key("size", "load_weights")
-predict_metric_wrt_key("layers", "dynamo_transform_time")
-predict_metric_wrt_key("layers", "graph_compile_cached")
-predict_metric_wrt_key("size", "kv_cache_profiling")
-predict_metric_wrt_key("tokenizer_size", "tokenizer_init")
-predict_graph_capturing_time()
+    predict_metric_wrt_key("size", "load_weights")
+    predict_metric_wrt_key("layers", "dynamo_transform_time")
+    predict_metric_wrt_key("layers", "graph_compile_cached")
+    predict_metric_wrt_key("size", "kv_cache_profiling")
+    predict_metric_wrt_key("tokenizer_size", "tokenizer_init")
+    predict_graph_capturing_time()
+    
+    print("Predictor models have been created successfully!")

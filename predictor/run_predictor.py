@@ -50,6 +50,6 @@ for split in ["train", "validation"]:
         pred = predict_total_time(t["size"], t["layers"], t["batch_size"], t["tokenizer_size"], i)
         diff = abs(pred - t["time"])
         diff_sum += diff
-        print(f"Predicted ({t['label']}): {pred:.3f}s | Truth: {t['time']} | Diff: {diff}")
+        print(f"{t['label']} | Predicted: {pred:.3f}s | Truth: {t['time']} | Diff: {diff}")
 
     print(f"Diff: {diff_sum} | Avg: {diff_sum / len(test_data)}")
