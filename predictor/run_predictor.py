@@ -1,6 +1,9 @@
 import joblib
 import numpy as np
 import json
+import argparse
+from pathlib import Path
+import pickle
 
 predictors = [
     {"model": "load_weights", "features": ["size"]},
@@ -11,14 +14,11 @@ predictors = [
     {"model": "tokenizer_init", "features": ["tokenizer_size"]},
 ]
 
-with open("./predictor_input.json", "r") as f:
-    res = json.load(f)
-
-def predict_total_time(size, layers, batch_size, tokenizer_size, i):
+def predict_total_time(size, layers, batch_size, tokenizer_size, models_path):
     total_time = 0
     for pred in predictors:
         # Load trained predictor
-        model = joblib.load(f"./models/{pred['model']}.pkl")
+        model = joblib.load(f"{models_path}/{pred['model']}.pkl")
         
         target_metric = 1
         for f in pred["features"]:
@@ -34,22 +34,33 @@ def predict_total_time(size, layers, batch_size, tokenizer_size, i):
         current_pred = model.predict(np.array([[target_metric]]))[0]
         total_time += current_pred
 
-    # Add 0.2s for model_init
-    return total_time + 0.2
+    # Read constant time for model_init
+    with open(f"{models_path}/constant_model_init.pkl", "rb") as f:
+        model_init_time = pickle.load(f)
+        
+    return total_time + model_init_time
 
+def predict(models_path, test_data_path):
+    with open(test_data_path, "r") as f:
+        test_data_dict = json.load(f)
+        
+    for split in ["train", "validation"]:
+        print(f"\n\n{split}")
+        test_data = test_data_dict[split]
+        diff_sum = 0
+        for t in test_data:
+            pred = predict_total_time(t["size"], t["layers"], t["batch_size"], t["tokenizer_size"], models_path)
+            diff = abs(pred - t["time"])
+            diff_sum += diff
+            print(f"{t['label']} | Predicted: {pred:.3f}s | Truth: {t['time']} | Diff: {diff:.2f}")
 
-
-with open("test_data.json", "r") as f:
-    test_data_dict = json.load(f)
+        print(f"Diff: {diff_sum:.2f} | Avg: {(diff_sum / len(test_data)):.2f}")
     
-for split in ["train", "validation"]:
-    print(f"\n\n{split}")
-    test_data = test_data_dict[split]
-    diff_sum = 0
-    for i, t in enumerate(test_data):
-        pred = predict_total_time(t["size"], t["layers"], t["batch_size"], t["tokenizer_size"], i)
-        diff = abs(pred - t["time"])
-        diff_sum += diff
-        print(f"{t['label']} | Predicted: {pred:.3f}s | Truth: {t['time']} | Diff: {diff}")
+    
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run predictor")
+    parser.add_argument("--models_path", help="Path to models dir", type=Path, required=True)
+    parser.add_argument("--test_data_path", help="Path to test_data.json", type=Path, required=True)
+    args = parser.parse_args()
 
-    print(f"Diff: {diff_sum} | Avg: {diff_sum / len(test_data)}")
+    predict(args.models_path, args.test_data_path)

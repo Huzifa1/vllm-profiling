@@ -1,10 +1,9 @@
-import sys
 import json
 import argparse
 from pathlib import Path
 import re
 
-def parse_input(avg_comparison_results_path, models_config_path):
+def parse_input(avg_comparison_results_path, models_config_path, output_path):
     with open(avg_comparison_results_path, "r") as f:
         results = json.load(f)
         
@@ -41,16 +40,17 @@ def parse_input(avg_comparison_results_path, models_config_path):
         "models_config": models_config
     }
     
-    with open("predictor_input.json", "w") as f:
+    with open(output_path, "w") as f:
         json.dump(output, f, indent=4)
         
-    print("predictor_input.json has been created successfully!")
+    print(f"{output_path} has been created successfully!")
     
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Parse input JSON files.")
     parser.add_argument("--avg_comparison_results", help="Path to avg_comparison_results.json", type=Path, required=True)
     parser.add_argument("--models_config", help="Path to models_config.json", type=Path, required=True)
+    parser.add_argument("--output_path", help="Path to write output", type=Path, required=True)
     args = parser.parse_args()
 
-    parse_input(args.avg_comparison_results, args.models_config)
+    parse_input(args.avg_comparison_results, args.models_config, args.output_path)
