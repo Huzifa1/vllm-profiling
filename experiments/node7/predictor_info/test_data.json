@@ -113,6 +113,14 @@
             "layers": 32,
             "tokenizer_size": 2.1,
             "time": 9.754
+        },
+        {
+            "label": "olmoe-7b",
+            "size": 7,
+            "batch_size": 67,
+            "layers": 16,
+            "tokenizer_size": 2.1,
+            "time": 10.434
         }
     ]
 }

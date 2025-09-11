@@ -55,7 +55,7 @@ def main(file_name):
             s = extract_time(line, r"time: ([\d.]+) s")
             profiling_results["dynamo_transform_time"] = s
 
-        elif "Compiling a graph for general shape takes" in line:
+        elif "Compiling a graph for" in line:
             s = extract_time(line, r"takes ([\d.]+) s")
             profiling_results["graph_compile_general_shape"] = s
             

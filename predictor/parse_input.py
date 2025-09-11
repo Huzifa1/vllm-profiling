@@ -50,7 +50,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Parse input JSON files.")
     parser.add_argument("--avg_comparison_results", help="Path to avg_comparison_results.json", type=Path, required=True)
     parser.add_argument("--models_config", help="Path to models_config.json", type=Path, required=True)
-    parser.add_argument("--output_path", help="Path to write output", type=Path, required=True)
+    parser.add_argument("--output_path", help="Path to write out predictor_input.json", type=Path, required=True)
     args = parser.parse_args()
 
     parse_input(args.avg_comparison_results, args.models_config, args.output_path)

@@ -8,16 +8,19 @@ if len(sys.argv) < 2:
     print("Usage: python avg_results.py <iterations_dir_path>")
     sys.exit(1)
     
-base_dir = sys.argv[1]
-output_file = os.path.join(base_dir, "avg_comparison_results.json")
+iterations_dir_path = sys.argv[1]
+
+# Output file should be sibiling to iterations_dir_path
+parent_dir = os.path.dirname(iterations_dir_path.rstrip(os.sep))
+output_file = os.path.join(parent_dir, "avg_comparison_results.json")
 
 # Initialize containers
 labels = None
 data_accumulator = {}  # key -> list of lists (each sublist is from one file)
 
 # Gather and process all JSON files
-for iteration in sorted(os.listdir(base_dir)):
-    file_path = os.path.join(base_dir, iteration, "comparison_results.json")
+for iteration in sorted(os.listdir(iterations_dir_path)):
+    file_path = os.path.join(iterations_dir_path, iteration, "comparison_results.json")
     if not os.path.isfile(file_path):
         continue
 
@@ -43,7 +46,11 @@ for iteration in sorted(os.listdir(base_dir)):
                     val -= content["data"]["total_time"][i]
                     
                 if key == "kv_cache_profiling":
-                    val -= content["data"]["torch.compile"][i] + content["data"]["graph_compile_cached"][i]
+                    # It could be null if this is the first time (no cache is available)
+                    graph_compile_cached_time = content["data"]["graph_compile_cached"][i]
+                    if graph_compile_cached_time is None:
+                        graph_compile_cached_time = 0
+                    val -= content["data"]["torch.compile"][i] + graph_compile_cached_time
                 
                 data_accumulator[key][i].append(val)
 
