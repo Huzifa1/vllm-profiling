@@ -13,13 +13,40 @@ def compare_step(results1, results2, step):
     table_data = []
     sum_speedup = 0
     
-    assert len(results1["labels"]) == len(results2["labels"])
+    if len(results1["labels"]) != len(results2["labels"]):
+        # Take only the common labels
+        common_labels = set(results1["labels"]).intersection(set(results2["labels"]))
+        print(f"Warning: Different number of labels. Comparing only common labels: {common_labels}")
+        results1_indices = [i for i, label in enumerate(results1["labels"]) if label in common_labels]
+        results2_indices = [i for i, label in enumerate(results2["labels"]) if label in common_labels]
+        results1["labels"] = [results1["labels"][i] for i in results1_indices]
+        results2["labels"] = [results2["labels"][i] for i in results2_indices]
+        
+        for step in results1["data"]:
+            results1["data"][step] = [results1["data"][step][i] for i in results1_indices]
+            
+        for step in results2["data"]:
+            results2["data"][step] = [results2["data"][step][i] for i in results2_indices]
+        
     # Assuming the labels match
     for i, label in enumerate(results1["labels"]):
         model_name = extract_model_name(label)
-    
-        value1 = results1["data"][step][i]
-        value2 = results2["data"][step][i]
+
+        
+        if step == "kv_cache_profiling":
+            # Special case: Substract torch.compile and graph_compile_cached
+            if (graph_compile_cached_time1 := results1["data"]["graph_compile_cached"][i]) is None:
+                graph_compile_cached_time1 = 0
+            value1 = results1["data"][step][i] - results1["data"]["torch.compile"][i] - graph_compile_cached_time1
+            
+            if (graph_compile_cached_time2 := results2["data"]["graph_compile_cached"][i]) is None:
+                graph_compile_cached_time2 = 0
+            value2 = results2["data"][step][i] - results2["data"]["torch.compile"][i] - graph_compile_cached_time2
+            
+        else:    
+            value1 = results1["data"][step][i]
+            value2 = results2["data"][step][i]
+            
         speedup = value2 / value1
         sum_speedup += speedup
         
@@ -34,7 +61,7 @@ def compare_files(file_path1, file_path2):
     results1 = read_json_file(file_path1)
     results2 = read_json_file(file_path2)
     
-    for step in ["load_weights", "model_init", "dynamo_transform_time", "graph_compile_cached", "graph_capturing", "tokenizer_init", "total_time"]:
+    for step in ["load_weights", "model_init", "dynamo_transform_time", "graph_compile_cached", "graph_capturing", "kv_cache_profiling", "tokenizer_init", "total_time"]:
         compare_step(results1, results2, step)
         
         
