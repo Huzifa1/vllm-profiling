@@ -1,16 +1,6 @@
 import argparse
-
 import time
-import torch
 import gc
-
-import os
-os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
-
-def clear_cache():
-    torch.cuda.empty_cache()
-    torch.cuda.reset_peak_memory_stats()
-    torch.cuda.ipc_collect()
 
 def initialize_engine(args: argparse.Namespace) -> "LLMEngine":
     """Initialize the LLMEngine from the command line arguments."""
@@ -26,7 +16,6 @@ def parse_args():
 
 def main(args: argparse.Namespace):
     """Main function that sets up and runs the prompt processing."""
-    clear_cache()
     
     start = time.time()
     engine = initialize_engine(args)
