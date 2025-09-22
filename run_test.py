@@ -71,9 +71,7 @@ def main():
         merged_params = {**default_params, **cfg}
 
         static_params = {k: v for k, v in merged_params.items() if not is_array(v)}
-        print("Static params:", static_params)
         tuned_params = {k: v for k, v in merged_params.items() if is_array(v)}
-        print("Tuned params:", tuned_params)
 
         if not tuned_params:
             # No arrays: run once
