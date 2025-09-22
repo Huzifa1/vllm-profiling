@@ -15,19 +15,19 @@ def clear_cache():
 def is_array(val):
     return isinstance(val, list)
 
-def build_command(base_params, combination, config_dir):
+def build_command(base_params, config_dir):
     args = []
     output_suffix = []
-
+    print(base_params)
     for key, value in base_params.items():
         flag = f"--{key}"
-        if key in combination:
-            value = combination[key]
-            val_str = str(value)
-            # If value is a path, use only the basename
-            if '/' in val_str:
-                val_str = os.path.basename(val_str.rstrip("/"))
-            output_suffix.append(f"{key}_{val_str.replace(' ', '_')}")
+        # if key in combination:
+        # value = combination[key]
+        val_str = str(value)
+        # If value is a path, use only the basename
+        if '/' in val_str:
+            val_str = os.path.basename(val_str.rstrip("/"))
+        output_suffix.append(f"{key}_{val_str.replace(' ', '_')}")
         if value is None:
             args.append(flag)
         elif isinstance(value, str):
@@ -75,10 +75,10 @@ def main():
 
         if not tuned_params:
             # No arrays: run once
-            cmd, output_file = build_command(static_params, {}, config_dir)
+            cmd, output_file = build_command(static_params, config_dir)
             output_files.append(output_file)
             print("Running:", cmd)
-            subprocess.run(cmd, shell=True, check=True)
+            # subprocess.run(cmd, shell=True, check=True)
             continue
 
         # Cartesian product of all array-valued params
@@ -87,10 +87,10 @@ def main():
 
         for values in tuned_values:
             combination = dict(zip(tuned_keys, values))
-            cmd, output_file = build_command({**static_params, **combination}, combination, config_dir)
+            cmd, output_file = build_command({**static_params, **combination}, config_dir)
             output_files.append(output_file)
             print("Running:", cmd)
-            subprocess.run(cmd, shell=True, check=True)
+            # subprocess.run(cmd, shell=True, check=True)
 
 
     # Run compare_logs.py on all output files
@@ -100,7 +100,7 @@ def main():
         os.makedirs(os.path.dirname(compare_cmd[-1]))
     print("Comparing logs...")
     sleep(3)  # Give some time for the previous commands to finish
-    subprocess.run(compare_cmd, check=True)
+    # subprocess.run(compare_cmd, check=True)
 
 if __name__ == "__main__":
     main()
