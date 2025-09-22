@@ -80,7 +80,7 @@ def main():
             cmd, output_file = build_command(static_params, {}, config_dir)
             output_files.append(output_file)
             print("Running:", cmd)
-            # subprocess.run(cmd, shell=True, check=True)
+            subprocess.run(cmd, shell=True, check=True)
             continue
 
         # Cartesian product of all array-valued params
@@ -92,7 +92,7 @@ def main():
             cmd, output_file = build_command({**static_params, **combination}, combination, config_dir)
             output_files.append(output_file)
             print("Running:", cmd)
-            # subprocess.run(cmd, shell=True, check=True)
+            subprocess.run(cmd, shell=True, check=True)
 
 
     # Run compare_logs.py on all output files
@@ -102,7 +102,7 @@ def main():
         os.makedirs(os.path.dirname(compare_cmd[-1]))
     print("Comparing logs...")
     sleep(3)  # Give some time for the previous commands to finish
-    # subprocess.run(compare_cmd, check=True)
+    subprocess.run(compare_cmd, check=True)
 
 if __name__ == "__main__":
     main()
