@@ -97,6 +97,8 @@ def get_sort_indices(labels, sort_by="model_size"):
         return sorted(range(len(labels)), key=lambda i: sizes[i])
     elif sort_by == "alphabetical":
         return sorted(range(len(labels)), key=lambda i: natural_sort_key(labels[i]))
+    else:
+        raise ValueError(f"Unsupported sort_by value: {sort_by}")
     
 def get_labels_matrics(json_filepath, sort_by):
     with open(json_filepath, 'r') as f:
