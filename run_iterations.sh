@@ -22,6 +22,7 @@ if [ "$IS_FIRST_TIME" = true ] ; then
 fi
 
 for i in 1 2 3 4 5; do
+    mkdir -p "$DIR_PATH/iterations/$i"
     run_test
     mv_outputs "$DIR_PATH/iterations/$i";
 done

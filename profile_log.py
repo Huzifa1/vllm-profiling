@@ -92,6 +92,11 @@ def main(file_name):
             total_time += profiling_results[key]
     profiling_results["total_time"] = total_time        
     
+    # In some cases (bitsandbytes qunantization), load_weights is not logged
+    # Deduce it from model_loading and model_init when possible
+    if profiling_results["load_weights"] is None:
+        if profiling_results["model_loading"] is not None and profiling_results["model_init"] is not None:
+            profiling_results["load_weights"] = profiling_results["model_loading"] - profiling_results["model_init"]
             
     return profiling_results  
                 
