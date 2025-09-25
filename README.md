@@ -22,16 +22,28 @@ python3 apply_vllm_changes.py
     "env": {
         "YOUR_CUSTOM_ENV_VAR": "CUSTOM_VALUE"
     },
-    "params": {
-        "vllm-flag1": "vllm-flag1-value",
-        "vllm-flag2": ["vllm-flag2-value1", "vllm-flag2-value2"]
-    }
+    "default_params": {
+        "gpu-memory-utilization": 0.9,
+        "max-model-len": [4096, 8192]
+    },
+    "configs": [
+        {"model": "meta-llama/Llama-2-7b-hf"},
+        {"model": "Qwen/Qwen1.5-4B", "max-num-seqs": 32}
+    ]
 }
 ```
 
-When running vllm, all environment variables in `env` will be set, and all flags in `params` will be passed to vllm.
+When running vllm, all environment variables in `env` will be set, and all params in `default_params` will be passed to vllm for each config.
 
-If the flag value is an array, vllm will run for every value. If there are multiple array values, vllm will run for all possible combinations.
+If the `default_params` value is an array, vllm will run each config for every value. If there are multiple array values, vllm will run for all possible combinations.
+
+In the previous example, the following commands will be run:
+```bash
+python3 engine.py --model "meta-llama/Llama-2-7b-hf" --gpu-memory-utilization 0.9 --max-model-len 4096
+python3 engine.py --model "meta-llama/Llama-2-7b-hf" --gpu-memory-utilization 0.9 --max-model-len 8192
+python3 engine.py --model "Qwen/Qwen1.5-4B" --max-num-seqs 32 --gpu-memory-utilization 0.9 --max-model-len 4096
+python3 engine.py --model "Qwen/Qwen1.5-4B" --max-num-seqs 32 --gpu-memory-utilization 0.9 --max-model-len 8192
+```
 
 5) Run tests:
 
