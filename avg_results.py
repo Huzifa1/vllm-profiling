@@ -47,10 +47,10 @@ for iteration in sorted(os.listdir(iterations_dir_path)):
                     
                 if key == "kv_cache_profiling":
                     # It could be null if this is the first time (no cache is available)
-                    graph_compile_cached_time = content["data"]["graph_compile_cached"][i]
-                    if graph_compile_cached_time is None:
+                    if graph_compile_cached_time := content["data"]["graph_compile_cached"][i] is None:
                         graph_compile_cached_time = 0
-                    val -= content["data"]["torch.compile"][i] + graph_compile_cached_time
+                    if content["data"]["torch.compile"][i] is not None:
+                        val -= content["data"]["torch.compile"][i] + graph_compile_cached_time
                 
                 data_accumulator[key][i].append(val)
 
