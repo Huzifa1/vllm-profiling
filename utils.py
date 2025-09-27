@@ -21,6 +21,13 @@ def num_of_batch_sizes(cuda_graph_sizes):
 def natural_sort_key(s):
     return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', s)]
 
+def extract_version(label):
+    # Extract version numbers like v1.2.3
+    match = re.search(r'v(\d+(?:\.\d+)*)', label)
+    if match:
+        return tuple(map(int, match.group(1).split(".")))
+    return ()
+
 def extract_label_value(label, key):
     return int(label.split(key)[1].split(".txt")[0].split("_")[1])
 
@@ -97,6 +104,8 @@ def get_sort_indices(labels, sort_by="model_size"):
         return sorted(range(len(labels)), key=lambda i: sizes[i])
     elif sort_by == "alphabetical":
         return sorted(range(len(labels)), key=lambda i: natural_sort_key(labels[i]))
+    elif sort_by == "version":
+        return sorted(range(len(labels)), key=lambda i: extract_version(labels[i]))
     else:
         raise ValueError(f"Unsupported sort_by value: {sort_by}")
     
@@ -106,39 +115,40 @@ def get_labels_matrics(json_filepath, sort_by):
 
     labels = json_data['labels']
     metrics = json_data['data']
-    
-    # Modify metrics
-    
+        
     # Substract torch.compile, graph_compile_cached from kv_cache_profiling
     metrics['kv_cache_profiling'] = [
         metrics['kv_cache_profiling'][i] - metrics['torch.compile'][i] - (metrics['graph_compile_cached'][i] if metrics['graph_compile_cached'][i] is not None else 0)
         for i in range(len(metrics['kv_cache_profiling']))
     ]
     
-    # No need for model_loading (it's just a sum of load_weights and model_init)
-    del metrics['model_loading']
-    
-    # No need for torch.compile (it's just a sum of dynamo_transfer_time and graph_compile_general_shape)
-    del metrics['torch.compile']
-    
-    # No need for init_engine (it's just a sum of kv_cache_profiling and graph_capturing)
-    del metrics['init_engine']
-    
-    # No need for kv_cache_init (it's just constant time for all models ~0.01s)
-    if 'kv_cache_init' in metrics:
-        del metrics['kv_cache_init']
-    
-    # No need for actual_total_time (it's just same as total_time + 14s platform detection overhead)
-    del metrics['actual_total_time']
-    
     sort_indices = get_sort_indices(labels, sort_by)
     sorted_labels = [labels[i] for i in sort_indices]
     
     return metrics, sorted_labels, sort_indices
 
-def draw_graph(json_file_path, sort_by):
+def draw_graph(json_file_path, sort_by, included_keys=None):
     
     metrics, sorted_labels, sort_indices = get_labels_matrics(json_file_path, sort_by)
+    
+    if included_keys is not None:
+        metrics = {k: v for k, v in metrics.items() if k in included_keys}
+    else: # Default
+        # No need for model_loading (it's just a sum of load_weights and model_init)
+        del metrics['model_loading']
+        
+        # No need for torch.compile (it's just a sum of dynamo_transfer_time and graph_compile_general_shape)
+        del metrics['torch.compile']
+        
+        # No need for init_engine (it's just a sum of kv_cache_profiling and graph_capturing)
+        del metrics['init_engine']
+        
+        # No need for kv_cache_init (it's just constant time for all models ~0.01s)
+        if 'kv_cache_init' in metrics:
+            del metrics['kv_cache_init']
+        
+        # No need for actual_total_time (it's just same as total_time + 14s platform detection overhead)
+        del metrics['actual_total_time']
 
     # Number of metrics (keys in 'data')
     num_metrics = len(metrics)
