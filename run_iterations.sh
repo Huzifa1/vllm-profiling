@@ -18,6 +18,7 @@ mv_outputs() {
 # is it first time?
 if [ "$IS_FIRST_TIME" = true ] ; then
     run_test
+    mkdir -p "$DIR_PATH/uncached"
     mv_outputs "$DIR_PATH/uncached"
 fi
 
