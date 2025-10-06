@@ -154,6 +154,16 @@
         "vocab_size": 32000,
         "tokenizer_size": 1.8
     },
+    "gemma-7b": {
+        "size": 7,
+        "layers": 28,
+        "attn_heads": 16,
+        "attn_heads_num": 16,
+        "hidden_size": 3072,
+        "ffn_dim": 24576,
+        "vocab_size": 256000,
+        "tokenizer_size": 17.5
+    },
     "gpt-oss-20b": {
         "size": 21,
         "layers": 24,

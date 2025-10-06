@@ -102,12 +102,11 @@ def main(file_name):
                 
                 
 if __name__ == "__main__":
-    file_path = sys.argv[1]
-    
     if len(sys.argv) != 2:
         print(f"Usage: python3 {sys.argv[0]} <vllm_log_file>")
         sys.exit(1)
-
+        
+    file_path = sys.argv[1]
     profiling_results = main(file_path)
     
     print("Profiling Results:")

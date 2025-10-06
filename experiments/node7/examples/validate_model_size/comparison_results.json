@@ -1,6 +1,7 @@
 {
     "labels": [
         "output_model_falcon-11b.txt",
+        "output_model_gemma-7b.txt",
         "output_model_mistral-7b.txt",
         "output_model_mpt-7b.txt",
         "output_model_olmoe-7b.txt"
@@ -8,6 +9,7 @@
     "data": {
         "load_weights": [
             4.12,
+            3.06,
             2.4,
             2.93,
             2.63
@@ -15,17 +17,20 @@
         "model_init": [
             0.14,
             0.11,
+            0.11,
             0.1,
             0.1
         ],
         "model_loading": [
             4.274189,
+            3.176707,
             2.521311,
             3.03437,
             2.734913
         ],
         "dynamo_transform_time": [
             7.29,
+            4.53,
             5.01,
             2.5,
             2.84
@@ -34,52 +39,61 @@
             null,
             null,
             null,
+            null,
             null
         ],
         "graph_compile_cached": [
             6.681,
+            3.495,
             3.751,
             1.416,
             2.238
         ],
         "torch.compile": [
             7.29,
+            4.53,
             5.01,
             2.5,
             2.84
         ],
         "kv_cache_profiling": [
             16.14,
+            9.61,
             10.12,
             5.11,
             6.14
         ],
         "graph_capturing": [
             1.66,
+            1.18,
             1.15,
             1.11,
             1.06
         ],
         "init_engine": [
             18.27,
+            11.24,
             11.7,
             6.63,
             7.62
         ],
         "tokenizer_init": [
             0.1,
+            0.66,
             0.07,
             0.09,
             0.08
         ],
         "total_time": [
             22.644189,
+            15.076707,
             14.291311,
             9.75437,
             10.434913
         ],
         "actual_total_time": [
             33.15,
+            22.87,
             24.78,
             20.23,
             21.18

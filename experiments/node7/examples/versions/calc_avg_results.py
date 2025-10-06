@@ -4,6 +4,9 @@
 import os
 import re
 import json
+import sys
+sys.path.append(os.path.abspath(os.path.join("..", "..", "..", "..")))
+from utils import extract_version
 
 avg_comparison_results = {}
 results = {}
@@ -28,7 +31,7 @@ for iter_dir in os.listdir(iterations_dir_path):
                             results[file_name] = []
                         results[file_name].append(actual_total_time)
 
-labels = sorted(labels)
+labels = sorted(labels, key=lambda label: extract_version(label))
 avg_comparison_results["labels"] = labels
 avg_comparison_results["data"] = {
     "actual_total_time": [sum(results[label])/len(results[label]) for label in labels]

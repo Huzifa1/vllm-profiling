@@ -10,6 +10,8 @@ def read_json_file(file_path):
         return json.load(f)
 
 def compare_step(results1, results2, step):
+    output_results = []
+    
     table_data = []
     sum_speedup = 0
     
@@ -49,21 +51,31 @@ def compare_step(results1, results2, step):
             
         speedup = value2 / value1
         sum_speedup += speedup
-        
+        output_results.append({
+            "model_name": model_name,
+            "value1": value1,
+            "value2": value2,
+            "speedup": speedup
+        })
         table_data.append([model_name, value1, value2, str(round(speedup, 2)) + "x"])
     
     print(f"\nComparing {step}")
     # print(tabulate(table_data, headers=["Model Name", "Value1", "Value2", "SpeedUp"], tablefmt="grid"))
     print(f"Avg Speedup: {(sum_speedup / len(results1['labels'])):.2f}x")
     # print("\n\n")
+    
+    return output_results
 
 def compare_files(file_path1, file_path2):
+    output_results = {}
+    
     results1 = read_json_file(file_path1)
     results2 = read_json_file(file_path2)
     
     for step in ["load_weights", "model_init", "dynamo_transform_time", "graph_compile_cached", "graph_capturing", "kv_cache_profiling", "tokenizer_init", "total_time"]:
-        compare_step(results1, results2, step)
+        output_results[step] = compare_step(results1, results2, step)
         
+    return output_results
         
         
 if __name__ == "__main__":

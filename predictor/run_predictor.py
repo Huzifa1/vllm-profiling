@@ -41,6 +41,11 @@ def predict_total_time(size, layers, batch_size, tokenizer_size, models_path):
     return total_time + model_init_time
 
 def predict(models_path, test_data_path):
+    results = {
+        "train": [],
+        "validation": []
+    }
+    
     with open(test_data_path, "r") as f:
         test_data_dict = json.load(f)
         
@@ -52,9 +57,18 @@ def predict(models_path, test_data_path):
             pred = predict_total_time(t["size"], t["layers"], t["batch_size"], t["tokenizer_size"], models_path)
             diff = abs(pred - t["time"])
             diff_sum += diff
+            
+            results[split].append({
+                "label": t["label"],
+                "predicted": pred,
+                "truth": t["time"],
+                "diff": diff
+            })
             print(f"{t['label']} | Predicted: {pred:.3f}s | Truth: {t['time']} | Diff: {diff:.2f}")
 
         print(f"Diff: {diff_sum:.2f} | Avg: {(diff_sum / len(test_data)):.2f}")
+    
+    return results
     
     
 if __name__ == "__main__":
