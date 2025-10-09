@@ -47,7 +47,7 @@ for iteration in sorted(os.listdir(iterations_dir_path)):
                     
                 if key == "kv_cache_profiling":
                     # It could be null if this is the first time (no cache is available)
-                    if graph_compile_cached_time := content["data"]["graph_compile_cached"][i] is None:
+                    if (graph_compile_cached_time := content["data"]["graph_compile_cached"][i]) is None:
                         graph_compile_cached_time = 0
                     if content["data"]["torch.compile"][i] is not None:
                         val -= content["data"]["torch.compile"][i] + graph_compile_cached_time

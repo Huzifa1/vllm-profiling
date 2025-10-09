@@ -9,7 +9,7 @@ def read_json_file(file_path):
     with open(file_path, "r") as f:
         return json.load(f)
 
-def compare_step(results1, results2, step):
+def compare_step(results1, results2, step, verbosity):
     output_results = []
     
     table_data = []
@@ -24,11 +24,11 @@ def compare_step(results1, results2, step):
         results1["labels"] = [results1["labels"][i] for i in results1_indices]
         results2["labels"] = [results2["labels"][i] for i in results2_indices]
         
-        for step in results1["data"]:
-            results1["data"][step] = [results1["data"][step][i] for i in results1_indices]
+        for s in results1["data"]:
+            results1["data"][s] = [results1["data"][s][i] for i in results1_indices]
             
-        for step in results2["data"]:
-            results2["data"][step] = [results2["data"][step][i] for i in results2_indices]
+        for s in results2["data"]:
+            results2["data"][s] = [results2["data"][s][i] for i in results2_indices]
         
     # Assuming the labels match
     for i, label in enumerate(results1["labels"]):
@@ -59,21 +59,27 @@ def compare_step(results1, results2, step):
         })
         table_data.append([model_name, value1, value2, str(round(speedup, 2)) + "x"])
     
-    print(f"\nComparing {step}")
-    # print(tabulate(table_data, headers=["Model Name", "Value1", "Value2", "SpeedUp"], tablefmt="grid"))
-    print(f"Avg Speedup: {(sum_speedup / len(results1['labels'])):.2f}x")
-    # print("\n\n")
+    if verbosity is not None:
+        print(f"\nComparing {step}")
+        if verbosity == "verbose":
+            print(tabulate(table_data, headers=["Model Name", "Value1", "Value2", "SpeedUp"], tablefmt="grid"))
+        print(f"Avg Speedup: {(sum_speedup / len(results1['labels'])):.2f}x")
+        if verbosity == "verbose":
+            print("\n\n")
     
     return output_results
 
-def compare_files(file_path1, file_path2):
+def compare_files(file_path1, file_path2, verbosity="normal"):
+    if verbosity not in [None, "normal", "verbose"]:
+        raise ValueError("Verbosity should one of None, 'normal' or 'verbose'")
+    
     output_results = {}
     
     results1 = read_json_file(file_path1)
     results2 = read_json_file(file_path2)
     
-    for step in ["load_weights", "model_init", "dynamo_transform_time", "graph_compile_cached", "graph_capturing", "kv_cache_profiling", "tokenizer_init", "total_time"]:
-        output_results[step] = compare_step(results1, results2, step)
+    for step in ["load_weights", "model_init", "dynamo_transform_time", "graph_compile_cached", "graph_capturing", "kv_cache_profiling", "tokenizer_init", "total_time", "actual_total_time"]:
+        output_results[step] = compare_step(results1, results2, step, verbosity)
         
     return output_results
         

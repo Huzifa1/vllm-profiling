@@ -1,0 +1,74 @@
+{
+    "labels": [
+        "output_model_llama2-13b-hf_load-format_runai_streamer.txt",
+        "output_model_llama2-13b-hf_load-format_safetensors.txt",
+        "output_model_llama2-13b-hf-tensorized_load-format_tensorizer_enable-lora_.txt"
+    ],
+    "data": {
+        "load_weights": [
+            null,
+            null,
+            null
+        ],
+        "model_init": [
+            null,
+            null,
+            null
+        ],
+        "model_loading": [
+            null,
+            null,
+            null
+        ],
+        "dynamo_transform_time": [
+            null,
+            null,
+            null
+        ],
+        "graph_compile_general_shape": [
+            null,
+            null,
+            null
+        ],
+        "graph_compile_cached": [
+            null,
+            null,
+            null
+        ],
+        "torch.compile": [
+            null,
+            null,
+            null
+        ],
+        "kv_cache_profiling": [
+            null,
+            null,
+            null
+        ],
+        "graph_capturing": [
+            null,
+            null,
+            null
+        ],
+        "init_engine": [
+            null,
+            null,
+            null
+        ],
+        "tokenizer_init": [
+            0.08,
+            0.08,
+            null
+        ],
+        "total_time": [
+            0.08,
+            0.08,
+            0
+        ],
+        "actual_total_time": [
+            0,
+            0,
+            0
+        ]
+    }
+}

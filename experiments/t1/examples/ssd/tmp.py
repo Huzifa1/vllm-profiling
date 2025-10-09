@@ -18,24 +18,35 @@ models_map = {
 for i in range(1, 6):
     dir_path = f"./iterations/{i}"
     for file in os.listdir(dir_path):
+        
         if not file.startswith("output_"):
             continue
         old_filepath = os.path.join(dir_path, file)
-        old_model_name = file.split("_")[-1].split(".txt")[0]
-        if old_model_name in models_map:
-            new_model_name = models_map[old_model_name]
-            new_file = f"output_model_{new_model_name}.txt"
-            new_filepath = os.path.join(dir_path, new_file)
-            
+        
+        if file == "output_gpu-memory-utilization_0.9_model_Qwen1.5-14B_max_model_len_16752.txt":
+            new_filepath = os.path.join(dir_path, "output_model_qwen-14b.txt")
             os.rename(old_filepath, new_filepath)
+        else:
+            old_model_name = file.split("_")[-1].split(".txt")[0]
+            if old_model_name in models_map:
+                new_model_name = models_map[old_model_name]
+                new_file = f"output_model_{new_model_name}.txt"
+                new_filepath = os.path.join(dir_path, new_file)
+                
+                os.rename(old_filepath, new_filepath)
             
     with open(f"{dir_path}/comparison_results.json", "r") as f:
         content = json.load(f)
         
     for i,l in enumerate(content["labels"]):
-        old_model_name = l.split("_")[-1].split(".txt")[0]
-        new_model_name = models_map[old_model_name]
-        new_file = f"output_model_{new_model_name}.txt"
+        
+        if l == "output_gpu-memory-utilization_0.9_model_Qwen1.5-14B_max_model_len_16752.txt":
+            new_file = "output_model_qwen-14b.txt"
+        else:
+            old_model_name = l.split("_")[-1].split(".txt")[0]
+            new_model_name = models_map[old_model_name]
+            new_file = f"output_model_{new_model_name}.txt"
+            
         content["labels"][i] = new_file
         
     with open(f"{dir_path}/comparison_results.json", "w") as f:
