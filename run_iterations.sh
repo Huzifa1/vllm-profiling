@@ -28,4 +28,4 @@ for i in 1 2 3 4 5; do
     mv_outputs "$DIR_PATH/iterations/$i";
 done
 
-python avg_results.py $DIR_PATH/iterations
+python3 avg_results.py $DIR_PATH/iterations

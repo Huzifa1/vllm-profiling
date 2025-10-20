@@ -1,5 +1,6 @@
 import re
 import sys
+from datetime import datetime
 
 def extract_time(line, pattern):
     """Extract time from a line using a regex pattern."""
@@ -83,6 +84,35 @@ def main(file_name):
             s = extract_time(line, r"initialize_engine took ([\d.]+) seconds")
             profiling_results["actual_total_time"] = s
             
+    
+    if profiling_results["actual_total_time"] == 0: # In case of online serving
+        # Calc the difference between first and last line
+        total_seconds = None
+        
+        first_timestamp_str = f"{lines[0].split()[1]} {lines[0].split()[2]}"
+        first_timestamp = datetime.strptime(first_timestamp_str, "%m-%d %H:%M:%S")
+        
+        selected_last_line = lines[-1]
+        keyword = None
+        for line in lines[::-1]:
+            if "DEBUG" in line or "INFO" in line:
+                keyword = "DEBUG"
+                if "INFO" in line:
+                    keyword = "INFO"
+                
+                selected_last_line = line
+                break
+            else:
+                continue
+        
+        last_timestamp_str = None
+        if total_seconds == None:
+            tmp = selected_last_line.split(f"{keyword} ")
+            last_timestamp_str = f"{tmp[1].split()[0]} {tmp[1].split()[1]}"
+            last_timestamp = datetime.strptime(last_timestamp_str, "%m-%d %H:%M:%S")
+            total_seconds = (last_timestamp - first_timestamp).total_seconds()
+            
+        profiling_results["actual_total_time"] = total_seconds
     
     # Calculate total time
     total_time_keys = ["model_loading", "init_engine", "tokenizer_init"]

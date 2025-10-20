@@ -31,7 +31,10 @@ def build_command(base_params, config_dir):
             args.append(flag)
         elif isinstance(value, str):
             args.append(flag)
-            args.extend(shlex.split(value))
+            if value.strip().startswith("{"):  # detect JSON value
+                args.append(value)
+            else:
+                args.extend(shlex.split(value))
         else:
             args.extend([flag, str(value)])
 

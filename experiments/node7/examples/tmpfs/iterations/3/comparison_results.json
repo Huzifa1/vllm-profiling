@@ -1,0 +1,116 @@
+{
+    "labels": [
+        "output_model_llama2-13b-hf_default.txt",
+        "output_model_llama2-13b-hf_tmpfs.txt",
+        "output_model_llama3-3b_default.txt",
+        "output_model_llama3-3b_tmpfs.txt",
+        "output_model_qwen-7b_default.txt",
+        "output_model_qwen-7b_tmpfs.txt"
+    ],
+    "data": {
+        "load_weights": [
+            3.47,
+            3.55,
+            0.87,
+            0.88,
+            2.08,
+            2.12
+        ],
+        "model_init": [
+            0.12,
+            0.13,
+            0.13,
+            0.13,
+            0.12,
+            0.12
+        ],
+        "model_loading": [
+            3.597399,
+            3.684008,
+            1.004481,
+            1.012738,
+            2.198457,
+            2.243491
+        ],
+        "dynamo_transform_time": [
+            6.8,
+            6.53,
+            4.59,
+            4.58,
+            5.2,
+            5.3
+        ],
+        "graph_compile_general_shape": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ],
+        "graph_compile_cached": [
+            5.904,
+            5.435,
+            3.959,
+            3.927,
+            4.267,
+            4.298
+        ],
+        "torch.compile": [
+            6.8,
+            6.53,
+            4.59,
+            4.58,
+            5.2,
+            5.3
+        ],
+        "kv_cache_profiling": [
+            15.1,
+            14.37,
+            10.12,
+            10.08,
+            11.18,
+            11.34
+        ],
+        "graph_capturing": [
+            1.45,
+            1.46,
+            1.01,
+            1.02,
+            1.13,
+            1.13
+        ],
+        "init_engine": [
+            17.04,
+            16.33,
+            11.6,
+            11.56,
+            12.78,
+            12.95
+        ],
+        "tokenizer_init": [
+            0.08,
+            0.08,
+            0.29,
+            0.28,
+            0.25,
+            0.25
+        ],
+        "total_time": [
+            20.717398999999997,
+            20.094007999999995,
+            12.894480999999999,
+            12.852738,
+            15.228456999999999,
+            15.443491
+        ],
+        "actual_total_time": [
+            27.96,
+            27.33,
+            20.39,
+            20.34,
+            22.64,
+            22.89
+        ]
+    }
+}

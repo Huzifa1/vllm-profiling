@@ -11,4 +11,4 @@ done
 
 python3 compare_logs.py $DIR_PATH/uncached/output_model_* $DIR_PATH/uncached/comparison_results.json;
 
-python avg_results.py $DIR_PATH/iterations
+python3 avg_results.py $DIR_PATH/iterations

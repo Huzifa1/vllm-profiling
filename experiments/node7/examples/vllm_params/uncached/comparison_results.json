@@ -1,0 +1,130 @@
+{
+    "labels": [
+        "output_model_llama3-3b_max-model-len_131072.txt",
+        "output_model_llama3-3b_max-model-len_16k.txt",
+        "output_model_llama3-3b_max-model-len_32k.txt",
+        "output_model_llama3-3b_max-model-len_64k.txt",
+        "output_model_llama3-3b_max-seq-len-to-capture_1024.txt",
+        "output_model_llama3-3b_max-seq-len-to-capture_2048.txt",
+        "output_model_llama3-3b_max-seq-len-to-capture_4096.txt"
+    ],
+    "data": {
+        "load_weights": [
+            0.87,
+            0.87,
+            0.87,
+            0.87,
+            0.87,
+            0.87,
+            0.87
+        ],
+        "model_init": [
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13
+        ],
+        "model_loading": [
+            1.002146,
+            1.001063,
+            1.005134,
+            1.008424,
+            1.007183,
+            1.005101,
+            1.005501
+        ],
+        "dynamo_transform_time": [
+            4.58,
+            4.56,
+            4.75,
+            4.59,
+            4.58,
+            4.57,
+            4.61
+        ],
+        "graph_compile_general_shape": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ],
+        "graph_compile_cached": [
+            3.935,
+            3.927,
+            4.178,
+            3.925,
+            3.92,
+            3.928,
+            3.976
+        ],
+        "torch.compile": [
+            4.58,
+            4.56,
+            4.75,
+            4.59,
+            4.58,
+            4.57,
+            4.61
+        ],
+        "kv_cache_profiling": [
+            10.08,
+            10.07,
+            10.52,
+            10.1,
+            10.06,
+            10.07,
+            10.15
+        ],
+        "graph_capturing": [
+            1.02,
+            1.04,
+            1.02,
+            1.02,
+            1.02,
+            1.02,
+            1.02
+        ],
+        "init_engine": [
+            11.57,
+            11.57,
+            12.01,
+            11.58,
+            11.54,
+            11.57,
+            11.63
+        ],
+        "tokenizer_init": [
+            0.29,
+            0.29,
+            0.29,
+            0.45,
+            0.29,
+            0.44,
+            0.28
+        ],
+        "total_time": [
+            12.862146,
+            12.861063,
+            13.305133999999999,
+            13.038424,
+            12.837182999999998,
+            13.015101,
+            12.915501
+        ],
+        "actual_total_time": [
+            20.36,
+            20.37,
+            20.8,
+            20.4,
+            20.34,
+            20.38,
+            20.45
+        ]
+    }
+}
