@@ -79,13 +79,15 @@ def sum_up_keys(data, i, keys):
 # Fix keys that are usually sum up of other keys
 for i, value in enumerate(aggregated_mean_data["total_time"]):
     
+    framework_bootstrap = sum_up_keys(aggregated_mean_data, i, ["detect_platfrom", "llm_imports", "get_model_info", "worker_init"])
     model_loading = sum_up_keys(aggregated_mean_data, i, ["load_weights", "model_init"])
     torch_compile = sum_up_keys(aggregated_mean_data, i, ["dynamo_transform_time", "graph_compile_general_shape"])
     kv_cache_profiling = torch_compile + sum_up_keys(aggregated_mean_data, i, ["kv_cache_profiling", "graph_compile_cached"])
     init_engine = kv_cache_profiling + sum_up_keys(aggregated_mean_data, i, ["graph_capturing"])
-    total_time = model_loading + init_engine + sum_up_keys(aggregated_mean_data, i, ["tokenizer_init"])
+    total_time = framework_bootstrap + model_loading + init_engine + sum_up_keys(aggregated_mean_data, i, ["tokenizer_init"])
     actual_total_time = total_time + sum_up_keys(aggregated_mean_data, i, ["actual_total_time"])
     
+    aggregated_mean_data["framework_bootstrap"][i] = framework_bootstrap
     aggregated_mean_data["model_loading"][i] = model_loading
     aggregated_mean_data["torch.compile"][i] = torch_compile
     aggregated_mean_data["kv_cache_profiling"][i] = kv_cache_profiling

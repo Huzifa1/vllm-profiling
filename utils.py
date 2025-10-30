@@ -78,6 +78,16 @@ def extract_batch_size(label):
 def extract_batch_size_x_model_size(label):
     return extract_batch_size(label) * extract_model_size(label)
 
+def extract_compiled_graph_size(label):
+    return get_model_info(label, "compiled_graph_sizes")
+
+def extract_kv_cache_profiling_overhead(label):
+    is_moe = get_model_info(label, "moe")
+    size = extract_model_size(label)
+    if is_moe:
+        size += size * 0.5
+    return size
+
 def extract_model_size(label):
     model_name = extract_model_name(label)
     pattern = re.compile(r'(\d+(?:\.\d+)?[bm])')

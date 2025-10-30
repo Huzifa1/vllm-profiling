@@ -9,10 +9,38 @@ def extract_time(line, pattern):
         return float(match.group(1))
     return 0
 
+def extract_datetime(log_line):
+    """extracts datetime"""
+    DATE_PATTERN = re.compile(r"\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}(?:\.\d{3})?")
+
+    match = DATE_PATTERN.search(log_line)
+    if match is None:
+        return None
+
+    value = match.group()
+
+    # Define the format string that matches the input time string
+    time_format = "%m-%d %H:%M:%S.%f" if "." in value else "%m-%d %H:%M:%S"
+
+    try:
+        return datetime.strptime(value, time_format)
+    except ValueError:
+        raise ValueError(
+            "Failed converting time value '%s' using format '%s'",
+            value,
+            time_format,
+        )
+
 def main(file_name):
     profiling_results = {
-        "load_weights": None,
+        "detect_platfrom": None,
+        "llm_imports": None,
+        "get_model_info": None,
+        "worker_init": None,
+        "framework_bootstrap": None,
+        "tokenizer_init": None,
         "model_init": None,
+        "load_weights": None,
         "model_loading": None,
         "dynamo_transform_time": None,
         "graph_compile_general_shape": None,
@@ -21,7 +49,6 @@ def main(file_name):
         "kv_cache_profiling": None,
         "graph_capturing": None,
         "init_engine": None,
-        "tokenizer_init": None,
         "total_time": 0,
         "actual_total_time": 0,
     }
@@ -80,42 +107,47 @@ def main(file_name):
             s = extract_time(line, r"took ([\d.]+) seconds")
             profiling_results["model_init"] = s
 
-        elif "initialize_engine took" in line:
-            s = extract_time(line, r"initialize_engine took ([\d.]+) seconds")
-            profiling_results["actual_total_time"] = s
+
+        # Now for custom logs
+        if "No plugins for group" in line:
+            detect_platfrom_start = extract_datetime(line)
+        elif "detected platform" in line:
+            detect_platfrom_end = extract_datetime(line)
+            profiling_results["detect_platfrom"] = (detect_platfrom_end - detect_platfrom_start).total_seconds()
+        elif "Available plugins for group" in line:
+            llm_imports_end = extract_datetime(line)
+            profiling_results["llm_imports"] = (llm_imports_end - detect_platfrom_end).total_seconds()
+        elif "Chunked prefill is" in line:
+            get_model_info_end = extract_datetime(line)
+            profiling_results["get_model_info"] = (get_model_info_end - llm_imports_end).total_seconds()
+        elif "Waiting for init message" in line:
+            worker_init_start = extract_datetime(line)
+        elif "Starting to load model" in line:
+            worker_init_end = extract_datetime(line)
+            profiling_results["worker_init"] = (worker_init_end - worker_init_start).total_seconds()
+            
             
     
-    if profiling_results["actual_total_time"] == 0: # In case of online serving
-        # Calc the difference between first and last line
-        total_seconds = None
+    # Calc actual_total_time as the difference between first and last line
+    total_seconds = None
+    
+    first_timestamp = extract_datetime(lines[0])
+    for line in lines[::-1]:
+        last_timestamp = extract_datetime(line)
+        if last_timestamp is not None:
+            break
+    total_seconds = (last_timestamp - first_timestamp).total_seconds()
         
-        first_timestamp_str = f"{lines[0].split()[1]} {lines[0].split()[2]}"
-        first_timestamp = datetime.strptime(first_timestamp_str, "%m-%d %H:%M:%S")
-        
-        selected_last_line = lines[-1]
-        keyword = None
-        for line in lines[::-1]:
-            if "DEBUG" in line or "INFO" in line:
-                keyword = "DEBUG"
-                if "INFO" in line:
-                    keyword = "INFO"
-                
-                selected_last_line = line
-                break
-            else:
-                continue
-        
-        last_timestamp_str = None
-        if total_seconds == None:
-            tmp = selected_last_line.split(f"{keyword} ")
-            last_timestamp_str = f"{tmp[1].split()[0]} {tmp[1].split()[1]}"
-            last_timestamp = datetime.strptime(last_timestamp_str, "%m-%d %H:%M:%S")
-            total_seconds = (last_timestamp - first_timestamp).total_seconds()
-            
-        profiling_results["actual_total_time"] = total_seconds
+    profiling_results["actual_total_time"] = total_seconds
+    
+    # Calc framework_bootstrap time
+    profiling_results["framework_bootstrap"] = profiling_results["detect_platfrom"] + \
+        profiling_results["llm_imports"] + \
+        profiling_results["get_model_info"] + \
+        profiling_results["worker_init"]
     
     # Calculate total time
-    total_time_keys = ["model_loading", "init_engine", "tokenizer_init"]
+    total_time_keys = ["framework_bootstrap", "model_loading", "init_engine", "tokenizer_init"]
     total_time = 0
     for key in total_time_keys:
         if profiling_results[key] is not None:

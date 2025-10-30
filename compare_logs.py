@@ -29,6 +29,11 @@ def main():
 
 
     custom_order = [
+        "detect_platfrom",
+        "llm_imports",
+        "get_model_info",
+        "worker_init",
+        "framework_bootstrap",
         "load_weights",
         "model_init",
         "model_loading",

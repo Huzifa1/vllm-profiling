@@ -6,6 +6,8 @@ import argparse
 from pathlib import Path
 import pickle
 import re
+import os
+import time
 
 def create_predictor_wrt_key(key, metric, data, models_output_dir):
     """Create predictor for key based on metric"""
@@ -53,6 +55,7 @@ def create_constant_predictor(key, data, models_output_dir):
         pickle.dump(avg, f)
     
 def create_predictors(predictor_input, models_output_dir):
+    os.makedirs(models_output_dir, exist_ok=True)
     
     key_metric_comb = [
         ("size", "load_weights"),
@@ -113,6 +116,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     predictor_input = parse_input(args.avg_comparison_results, args.models_config)
-    create_predictors(predictor_input, args.models_output_dir)    
+    start = time.perf_counter()
+    create_predictors(predictor_input, args.models_output_dir)
+    end = time.perf_counter()
     
-    print("Predictor models have been created successfully!")
+    print(f"Predictor models have been created successfully in {((end - start)*1000):.2f} ms!")

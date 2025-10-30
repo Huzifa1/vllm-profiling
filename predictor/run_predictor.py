@@ -4,6 +4,7 @@ import json
 import argparse
 from pathlib import Path
 import pickle
+import time
 
 predictors = [
     {"model": "load_weights", "features": ["size"]},
@@ -40,7 +41,7 @@ def predict_total_time(size, layers, batch_size, tokenizer_size, models_path):
         
     return total_time + model_init_time
 
-def predict(models_path, test_data_path):
+def predict(models_path, test_data_path, verbose=False):
     results = {
         "train": [],
         "validation": []
@@ -50,7 +51,9 @@ def predict(models_path, test_data_path):
         test_data_dict = json.load(f)
         
     for split in ["train", "validation"]:
-        print(f"\n\n{split}")
+        if verbose:
+            print(f"\n\n{split}")
+            
         test_data = test_data_dict[split]
         diff_sum = 0
         for t in test_data:
@@ -64,9 +67,12 @@ def predict(models_path, test_data_path):
                 "truth": t["time"],
                 "diff": diff
             })
-            print(f"{t['label']} | Predicted: {pred:.3f}s | Truth: {t['time']} | Diff: {diff:.2f}")
+            
+            if verbose:
+                print(f"{t['label']} | Predicted: {pred:.3f}s | Truth: {t['time']} | Diff: {diff:.2f}")
 
-        print(f"Diff: {diff_sum:.2f} | Avg: {(diff_sum / len(test_data)):.2f}")
+        if verbose:
+            print(f"Diff: {diff_sum:.2f} | Avg: {(diff_sum / len(test_data)):.2f}")
     
     return results
     
@@ -75,6 +81,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run predictor")
     parser.add_argument("--models_path", help="Path to models dir", type=Path, required=True)
     parser.add_argument("--test_data_path", help="Path to test_data.json", type=Path, required=True)
+    parser.add_argument("--verbose", help="Print predicted output", action='store_true')
     args = parser.parse_args()
 
-    predict(args.models_path, args.test_data_path)
+    start = time.perf_counter()
+    predict(args.models_path, args.test_data_path, args.verbose)
+    end = time.perf_counter()
+    
+    print(f"Prediction completed in {((end - start)*1000):.2f} ms!")

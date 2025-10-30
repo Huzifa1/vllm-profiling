@@ -7,7 +7,8 @@
         "hidden_size": 1024,
         "ffn_dim": 2816,
         "vocab_size": 151936,
-        "tokenizer_size": 6.8
+        "tokenizer_size": 6.8,
+        "compiled_graph_sizes": 695
     },
     "qwen-1.8b": {
         "size": 1.8,
@@ -17,7 +18,8 @@
         "hidden_size": 2048,
         "ffn_dim": 5504,
         "vocab_size": 151936,
-        "tokenizer_size": 6.8
+        "tokenizer_size": 6.8,
+        "compiled_graph_sizes": 747
     },
     "qwen-4b": {
         "size": 4,
@@ -27,7 +29,8 @@
         "hidden_size": 2560,
         "ffn_dim": 6912,
         "vocab_size": 151936,
-        "tokenizer_size": 6.8
+        "tokenizer_size": 6.8,
+        "compiled_graph_sizes": 1261
     },
     "qwen-7b": {
         "size": 7,
@@ -37,7 +40,8 @@
         "hidden_size": 4096,
         "ffn_dim": 11008,
         "vocab_size": 151936,
-        "tokenizer_size": 6.8
+        "tokenizer_size": 6.8,
+        "compiled_graph_sizes": 1002
     },
     "qwen-14b": {
         "size": 14,
@@ -47,7 +51,8 @@
         "hidden_size": 5120,
         "ffn_dim": 13696,
         "vocab_size": 152064,
-        "tokenizer_size": 6.8
+        "tokenizer_size": 6.8,
+        "compiled_graph_sizes": 1262
     },
     "qwen-14.3b": {
         "size": 14.3,
@@ -62,7 +67,8 @@
             "n_experts": 60,
             "n_active_experts": 4,
             "active_size": 2.7
-        }
+        },
+        "compiled_graph_sizes": 808
     },
     "llama2-7b-hf": {
         "size": 7,
@@ -72,7 +78,8 @@
         "hidden_size": 4096,
         "ffn_dim": 11008,
         "vocab_size": 32000,
-        "tokenizer_size": 1.8
+        "tokenizer_size": 1.8,
+        "compiled_graph_sizes": 995
     },
     "llama2-13b-hf": {
         "size": 13,
@@ -82,7 +89,8 @@
         "hidden_size": 5120,
         "ffn_dim": 13824,
         "vocab_size": 32000,
-        "tokenizer_size": 1.8
+        "tokenizer_size": 1.8,
+        "compiled_graph_sizes": 1253
     },
     "llama3-3b": {
         "size": 3,
@@ -92,7 +100,19 @@
         "hidden_size": 3072,
         "ffn_dim": 8192,
         "vocab_size": 128256,
-        "tokenizer_size": 8.7
+        "tokenizer_size": 8.7,
+        "compiled_graph_sizes": 979
+    },
+    "llama3.1-8b-instruct": {
+        "size": 8,
+        "layers": 32,
+        "attn_heads": 8,
+        "attn_heads_num": 32,
+        "hidden_size": 4096,
+        "ffn_dim": 14336,
+        "vocab_size": 128256,
+        "tokenizer_size": 8.7,
+        "compiled_graph_sizes": 1121
     },
     "falcon-7b": {
         "size": 7,
@@ -102,7 +122,8 @@
         "hidden_size": 4544,
         "ffn_dim": 18176,
         "vocab_size": 65024,
-        "tokenizer_size": 2.7
+        "tokenizer_size": 2.7,
+        "compiled_graph_sizes": 905
     },
     "falcon-11b": {
         "size": 11,
@@ -112,7 +133,8 @@
         "hidden_size": 4096,
         "ffn_dim": 16384,
         "vocab_size": 65024,
-        "tokenizer_size": 2.7
+        "tokenizer_size": 2.7,
+        "compiled_graph_sizes": 1716
     },
     "yi-6b": {
         "size": 6,
@@ -122,7 +144,8 @@
         "hidden_size": 4096,
         "ffn_dim": 11008,
         "vocab_size": 64000,
-        "tokenizer_size": 3.5
+        "tokenizer_size": 3.5,
+        "compiled_graph_sizes": 1120
     },
     "yi-9b": {
         "size": 9,
@@ -132,7 +155,8 @@
         "hidden_size": 4096,
         "ffn_dim": 11008,
         "vocab_size": 64000,
-        "tokenizer_size": 3.5
+        "tokenizer_size": 3.5,
+        "compiled_graph_sizes": 1693
     },
     "mpt-7b": {
         "size": 7,
@@ -142,7 +166,8 @@
         "hidden_size": 4096,
         "ffn_dim": 16384,
         "vocab_size": 50432,
-        "tokenizer_size": 2.1
+        "tokenizer_size": 2.1,
+        "compiled_graph_sizes": 550
     },
     "mistral-7b": {
         "size": 7,
@@ -152,7 +177,8 @@
         "hidden_size": 4096,
         "ffn_dim": 14336,
         "vocab_size": 32000,
-        "tokenizer_size": 1.8
+        "tokenizer_size": 1.8,
+        "compiled_graph_sizes": 1120
     },
     "gemma-7b": {
         "size": 7,
@@ -162,7 +188,8 @@
         "hidden_size": 3072,
         "ffn_dim": 24576,
         "vocab_size": 256000,
-        "tokenizer_size": 17.5
+        "tokenizer_size": 17.5,
+        "compiled_graph_sizes": 704
     },
     "gpt-oss-20b": {
         "size": 21,
@@ -177,7 +204,8 @@
             "n_experts": 32,
             "n_active_experts": 4,
             "active_size": 3.6
-        }
+        },
+        "compiled_graph_sizes": 917
     },
     "deepseek-v2-lite-16b": {
         "size": 16,
@@ -192,7 +220,8 @@
             "n_experts": 64,
             "n_active_experts": 6,
             "active_size": 2.4
-        }
+        },
+        "compiled_graph_sizes": 1060
     },
     "deepseek-r1-distill-llama-8b": {
         "size": 8,
@@ -202,7 +231,8 @@
         "hidden_size": 4096,
         "ffn_dim": 14336,
         "vocab_size": 128256,
-        "tokenizer_size": 8.7
+        "tokenizer_size": 8.7,
+        "compiled_graph_sizes": 1121
     },
     "deepseek-r1-distill-qwen-7b": {
         "size": 7,
@@ -212,21 +242,61 @@
         "hidden_size": 3584,
         "ffn_dim": 18944,
         "vocab_size": 152064,
-        "tokenizer_size": 6.8
+        "tokenizer_size": 6.8,
+        "compiled_graph_sizes": 984
     },
-    "mixtral-46.7b": {
-        "size": 46.7,
-        "layers": 32,
+    "granite3.3-8b-instruct": {
+        "size": 8,
+        "layers": 40,
         "attn_heads": 8,
         "attn_heads_num": 32,
         "hidden_size": 4096,
-        "ffn_dim": 14336,
-        "vocab_size": 32000,
-        "tokenizer_size": 1.8,
+        "ffn_dim": 12800,
+        "vocab_size": 49159,
+        "tokenizer_size": 3.4,
+        "compiled_graph_sizes": 1374
+    },
+    "granite4.0-h-3b": {
+        "size": 3,
+        "layers": 40,
+        "attn_heads": 8,
+        "attn_heads_num": 32,
+        "hidden_size": 2048,
+        "ffn_dim": 8192,
+        "vocab_size": 100352,
+        "tokenizer_size": 6.9,
+        "compiled_graph_sizes": 810
+    },
+    "granite4.0-h-32b": {
+        "size": 32,
+        "layers": 40,
+        "attn_heads": 8,
+        "attn_heads_num": 32,
+        "hidden_size": 4096,
+        "ffn_dim": 1536,
+        "vocab_size": 100352,
+        "tokenizer_size": 6.9,
         "moe": {
-            "n_experts": 8,
-            "n_active_experts": 2,
-            "active_size": 12.9
-        }
+            "n_experts": 72,
+            "n_active_experts": 10,
+            "active_size": 9
+        },
+        "compiled_graph_sizes": 865
+    },
+    "olmoe-7b": {
+        "size": 7,
+        "layers": 16,
+        "attn_heads": 16,
+        "attn_heads_num": 16,
+        "hidden_size": 2048,
+        "ffn_dim": 1024,
+        "vocab_size": 50304,
+        "tokenizer_size": 2.1,
+        "moe": {
+            "n_experts": 64,
+            "n_active_experts": 8,
+            "active_size": 1
+        },
+        "compiled_graph_sizes": 571
     }
 }

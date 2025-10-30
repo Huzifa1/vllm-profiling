@@ -78,7 +78,7 @@ def compare_files(file_path1, file_path2, verbosity="normal"):
     results1 = read_json_file(file_path1)
     results2 = read_json_file(file_path2)
     
-    for step in ["load_weights", "model_init", "dynamo_transform_time", "graph_compile_cached", "graph_capturing", "kv_cache_profiling", "tokenizer_init", "total_time", "actual_total_time"]:
+    for step in ["tokenizer_init", "model_init", "load_weights", "dynamo_transform_time", "graph_compile_cached", "kv_cache_profiling", "graph_capturing", "total_time", "actual_total_time"]:
         output_results[step] = compare_step(results1, results2, step, verbosity)
         
     return output_results
