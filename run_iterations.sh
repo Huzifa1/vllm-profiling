@@ -1,10 +1,11 @@
 #!/bin/bash
 
-EXP_DIR=${1:-model_size}
-EXP_BRANCH=${2:-node7}
+EXP_MACHINE=${1:-node7}
+EXP_DIR=${2:-model_size}
 IS_FIRST_TIME=${3:-false}
+NUM_ITERATIONS=${4:-5}
 
-DIR_PATH="experiments/$EXP_BRANCH/examples/$EXP_DIR"
+DIR_PATH="experiments/$EXP_MACHINE/examples/$EXP_DIR"
 
 run_test() {
     python3 run_test.py $DIR_PATH/env.json
@@ -22,7 +23,7 @@ if [ "$IS_FIRST_TIME" = true ] ; then
     mv_outputs "$DIR_PATH/uncached"
 fi
 
-for i in 1 2 3 4 5; do
+for i in $(seq 1 $NUM_ITERATIONS); do
     mkdir -p "$DIR_PATH/iterations/$i"
     run_test
     mv_outputs "$DIR_PATH/iterations/$i";

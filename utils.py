@@ -49,19 +49,19 @@ def extract_tokenizer_size(label):
     return get_model_info(label, "tokenizer_size")
 
 def extract_head_size_x_layers(label):
-    attn_heads = get_model_info(label, "attn_heads")
-    attn_heads_num = get_model_info(label, "attn_heads_num")
+    num_key_value_heads = get_model_info(label, "num_key_value_heads")
+    num_attention_heads = get_model_info(label, "num_attention_heads")
     hidden_size = get_model_info(label, "hidden_size")
     num_layers = get_model_info(label, "layers")
     ffn_dim = get_model_info(label, "ffn_dim")
     
     delta = 1
-    if attn_heads == 1:
+    if num_key_value_heads == 1:
         delta = 1.4
-    elif attn_heads != attn_heads_num:
+    elif num_key_value_heads != num_attention_heads:
         delta = 1.1
     
-    return 5e-8 * num_layers * (hidden_size * attn_heads_num + 0.5 * ffn_dim) * delta
+    return 5e-8 * num_layers * (hidden_size * num_attention_heads + 0.5 * ffn_dim) * delta
 
 def extract_model_name(label):
     return label.split("model_")[1].split("_")[0].split(".txt")[0]

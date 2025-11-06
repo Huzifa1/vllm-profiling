@@ -1,11 +1,12 @@
 #!/bin/bash
 
-EXP_DIR=${1:-model_size}
-EXP_BRANCH=${2:-node7}
+EXP_MACHINE=${1:-node7}
+EXP_DIR=${2:-model_size}
 
-DIR_PATH="experiments/$EXP_BRANCH/examples/$EXP_DIR"
+DIR_PATH="experiments/$EXP_MACHINE/examples/$EXP_DIR"
 
-for i in 1 2 3 4 5; do
+# Loop through all iterations in $DIR_PATH/iterations
+for i in $(ls -d $DIR_PATH/iterations/*/ | xargs -n 1 basename); do
     python3 compare_logs.py $DIR_PATH/iterations/$i/output_model_* $DIR_PATH/iterations/$i/comparison_results.json;
 done
 

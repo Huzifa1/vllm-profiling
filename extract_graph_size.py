@@ -5,7 +5,7 @@ from utils import extract_model_name
 
 def main():
     if len(sys.argv) < 2:
-        print(f"Usage: python3 {sys.argv[0]} <output_dir_path> <models_config.json_path>")
+        print(f"Usage: python3 {sys.argv[0]} <iteration_output_dir_path> <models_config.json_path>")
         sys.exit(1)
         
     output_dir = sys.argv[1]
