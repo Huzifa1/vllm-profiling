@@ -8,6 +8,9 @@ import pickle
 import re
 import os
 import time
+import sys
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from utils import extract_model_name
 
 def create_predictor_wrt_key(key, metric, data, models_output_dir):
     """Create predictor for key based on metric"""
@@ -70,36 +73,36 @@ def create_predictors(predictor_input, models_output_dir):
     create_constant_predictor("model_init", predictor_input, models_output_dir)
     create_constant_predictor("framework_bootstrap", predictor_input, models_output_dir)
 
-def parse_input(avg_comparison_results_path, models_config_path):
+def parse_input(avg_comparison_results_path, models_config_path, ignore_models):
     with open(avg_comparison_results_path, "r") as f:
         results = json.load(f)
         
     with open(models_config_path, "r") as f:
         models_config = json.load(f)
+    
+    ignore_models_list = ignore_models.split(",") if ignore_models else []
      
     # Prepare the labels   
     labels = []
-    for l in results["labels"]:
-        # Model name will be always like this *_model_MODELNAME*
-        match = re.search(r"_model_([a-zA-Z0-9.-]+(?:-[0-9.]+[bk])?(?:-[a-zA-Z0-9]+)*)(?=(_|\.))", l)
-        if match:
-            model_name = match.group(1)
-            labels.append(model_name)
+    ignored_indices = set()
+    for i,l in enumerate(results["labels"]):
+        model_name = extract_model_name(l)
+        if model_name in ignore_models_list:
+            ignored_indices.add(i)
+            continue
             
+        labels.append(model_name)
+
     # Prepare the data
+    for key in results["data"].keys():
+        results["data"][key] = [
+            v for i,v in enumerate(results["data"][key]) if i not in ignored_indices
+        ]
     data = results["data"]
     
     # Update kv_cache_profiling
     for i in range(len(data["kv_cache_profiling"])):
         data["kv_cache_profiling"][i] -= data["torch.compile"][i] + data["graph_compile_cached"][i]
-        
-    # Remove unecessary keys
-    del data["model_loading"]
-    del data["torch.compile"]
-    del data["init_engine"]
-    del data["actual_total_time"]
-    
-        
         
     output = {
         "labels": labels,
@@ -114,9 +117,10 @@ if __name__ == "__main__":
     parser.add_argument("--avg_comparison_results", help="Path to avg_comparison_results.json", type=Path, required=True)
     parser.add_argument("--models_config", help="Path to models_config.json", type=Path, required=True)
     parser.add_argument("--models_output_dir", help="Path to dump output models", type=Path, required=True)
+    parser.add_argument("--ignore_models", help="Comma separated list of models to ignore", type=str)
     args = parser.parse_args()
     
-    predictor_input = parse_input(args.avg_comparison_results, args.models_config)
+    predictor_input = parse_input(args.avg_comparison_results, args.models_config, args.ignore_models)
     start = time.perf_counter()
     create_predictors(predictor_input, args.models_output_dir)
     end = time.perf_counter()
