@@ -8,14 +8,14 @@ import time
 
 predictors = [
     {"model": "load_weights", "features": ["size"]},
-    {"model": "dynamo_transform_time", "features": ["layers"]},
-    {"model": "graph_compile_cached", "features": ["layers"]},
+    {"model": "dynamo_transform_time", "features": ["compiled_graph_sizes"]},
+    {"model": "graph_compile_cached", "features": ["compiled_graph_sizes"]},
     {"model": "kv_cache_profiling", "features": ["size"]},
     {"model": "graph_capturing", "features": ["size", "batch_size"]},
     {"model": "tokenizer_init", "features": ["tokenizer_size"]},
 ]
 
-def predict_total_time(size, layers, batch_size, tokenizer_size, models_path):
+def predict_total_time(size, layers, batch_size, tokenizer_size, compiled_graph_sizes, models_path):
     total_time = 0
     for pred in predictors:
         # Load trained predictor
@@ -27,6 +27,8 @@ def predict_total_time(size, layers, batch_size, tokenizer_size, models_path):
                 target_metric *= size
             elif f == "layers":
                 target_metric *= layers
+            elif f == "compiled_graph_sizes":
+                target_metric *= compiled_graph_sizes
             elif f == "batch_size":
                 target_metric *= batch_size
             elif f == "tokenizer_size":
@@ -39,7 +41,11 @@ def predict_total_time(size, layers, batch_size, tokenizer_size, models_path):
     with open(f"{models_path}/constant_model_init.pkl", "rb") as f:
         model_init_time = pickle.load(f)
         
-    return total_time + model_init_time
+    # Read constant time for framework_bootstrap
+    with open(f"{models_path}/constant_framework_bootstrap.pkl", "rb") as f:
+        framework_bootstrap = pickle.load(f)
+        
+    return total_time + model_init_time + framework_bootstrap
 
 def predict(models_path, test_data_path, verbose=False):
     results = {
@@ -57,7 +63,7 @@ def predict(models_path, test_data_path, verbose=False):
         test_data = test_data_dict[split]
         diff_sum = 0
         for t in test_data:
-            pred = predict_total_time(t["size"], t["layers"], t["batch_size"], t["tokenizer_size"], models_path)
+            pred = predict_total_time(t["size"], t["layers"], t["batch_size"], t["tokenizer_size"], t["compiled_graph_sizes"], models_path)
             diff = abs(pred - t["time"])
             diff_sum += diff
             

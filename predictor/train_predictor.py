@@ -59,8 +59,8 @@ def create_predictors(predictor_input, models_output_dir):
     
     key_metric_comb = [
         ("size", "load_weights"),
-        ("layers", "dynamo_transform_time"),
-        ("layers", "graph_compile_cached"),
+        ("compiled_graph_sizes", "dynamo_transform_time"),
+        ("compiled_graph_sizes", "graph_compile_cached"),
         ("size", "kv_cache_profiling"),
         ("tokenizer_size", "tokenizer_init")
     ]
@@ -68,6 +68,7 @@ def create_predictors(predictor_input, models_output_dir):
         create_predictor_wrt_key(key_metric[0], key_metric[1], predictor_input, models_output_dir)
     create_predictor_graph_capturing_time(predictor_input, models_output_dir)
     create_constant_predictor("model_init", predictor_input, models_output_dir)
+    create_constant_predictor("framework_bootstrap", predictor_input, models_output_dir)
 
 def parse_input(avg_comparison_results_path, models_config_path):
     with open(avg_comparison_results_path, "r") as f:

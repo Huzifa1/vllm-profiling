@@ -5,7 +5,7 @@
         "output_model_llama2-7b-hf.txt",
         "output_model_llama3-3b.txt",
         "output_model_qwen-0.5b.txt",
-        "output_model_qwen-14b_max_model_len_16752.txt",
+        "output_model_qwen-14b.txt",
         "output_model_qwen-1.8b.txt",
         "output_model_qwen-4b.txt",
         "output_model_qwen-7b.txt",
