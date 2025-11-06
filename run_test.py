@@ -5,31 +5,36 @@ import shlex
 import sys
 from itertools import product
 from time import sleep
-from utils import clear_cache
 
+def clear_cache():
+    import torch
+    torch.cuda.empty_cache()
+    torch.cuda.reset_peak_memory_stats()
+    torch.cuda.ipc_collect()
 
 def is_array(val):
     return isinstance(val, list)
 
-def build_command(base_params, combination, config_dir):
+def build_command(base_params, config_dir):
     args = []
     output_suffix = []
-
     for key, value in base_params.items():
         flag = f"--{key}"
-        if key in combination:
-            value = combination[key]
-            val_str = str(value)
-            # If value is a path, use only the basename
-            if '/' in val_str:
-                val_str = os.path.basename(val_str.rstrip("/"))
-                
-            output_suffix.append(f"{key}_{val_str.replace(' ', '_')}")
+        # if key in combination:
+        # value = combination[key]
+        val_str = str(value)
+        # If value is a path, use only the basename
+        if '/' in val_str:
+            val_str = os.path.basename(val_str.rstrip("/"))
+        output_suffix.append(f"{key}_{val_str.replace(' ', '_')}")
         if value is None:
             args.append(flag)
         elif isinstance(value, str):
             args.append(flag)
-            args.extend(shlex.split(value))
+            if value.strip().startswith("{"):  # detect JSON value
+                args.append(value)
+            else:
+                args.extend(shlex.split(value))
         else:
             args.extend([flag, str(value)])
 
@@ -47,6 +52,8 @@ def main():
         print(f"Usage: python3 {sys.argv[0]} <config_file.json>")
         sys.exit(1)
         
+    clear_cache()
+        
     output_files = []
 
     config_file = sys.argv[1]
@@ -58,30 +65,35 @@ def main():
     for k, v in config.get("env", {}).items():
         os.environ[k] = str(v)
 
-    params = config.get("params", {})
-    static_params = {k: v for k, v in params.items() if not is_array(v)}
-    tuned_params = {k: v for k, v in params.items() if is_array(v)}
+    default_params = config.get("default_params", {})
+    configs = config.get("configs", [])
 
-    if not tuned_params:
-        # No arrays: run once
-        cmd, output_file = build_command(static_params, {}, config_dir)
-        output_files.append(output_file)
-        clear_cache()
-        print("Running:", cmd)
-        subprocess.run(cmd, shell=True, check=True)
-        return
+    for cfg in configs:
+        # Merge default_params with cfg, cfg overrides defaults
+        merged_params = {**default_params, **cfg}
 
-    # Cartesian product of all array-valued params
-    tuned_keys = list(tuned_params.keys())
-    tuned_values = list(product(*[tuned_params[k] for k in tuned_keys]))
+        static_params = {k: v for k, v in merged_params.items() if not is_array(v)}
+        tuned_params = {k: v for k, v in merged_params.items() if is_array(v)}
 
-    for values in tuned_values:
-        combination = dict(zip(tuned_keys, values))
-        cmd, output_file = build_command({**static_params, **combination}, combination, config_dir)
-        output_files.append(output_file)
-        clear_cache()
-        print("Running:", cmd)
-        subprocess.run(cmd, shell=True, check=True)
+        if not tuned_params:
+            # No arrays: run once
+            cmd, output_file = build_command(static_params, config_dir)
+            output_files.append(output_file)
+            print("Running:", cmd)
+            subprocess.run(cmd, shell=True, check=True)
+            continue
+
+        # Cartesian product of all array-valued params
+        tuned_keys = list(tuned_params.keys())
+        tuned_values = list(product(*[tuned_params[k] for k in tuned_keys]))
+
+        for values in tuned_values:
+            combination = dict(zip(tuned_keys, values))
+            cmd, output_file = build_command({**static_params, **combination}, config_dir)
+            output_files.append(output_file)
+            print("Running:", cmd)
+            subprocess.run(cmd, shell=True, check=True)
+
 
     # Run compare_logs.py on all output files
     compare_script = os.path.join(os.path.dirname(__file__), "compare_logs.py")

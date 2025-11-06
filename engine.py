@@ -1,16 +1,8 @@
 import argparse
-
-from vllm import EngineArgs, LLMEngine
-from vllm.utils import FlexibleArgumentParser
 import time
-import torch
+import gc
 
-torch.cuda.empty_cache()
-torch.cuda.synchronize()
-
-torch._inductor.config.compile_threads = 16
-
-def initialize_engine(args: argparse.Namespace) -> LLMEngine:
+def initialize_engine(args: argparse.Namespace) -> "LLMEngine":
     """Initialize the LLMEngine from the command line arguments."""
     engine_args = EngineArgs.from_cli_args(args)
     return LLMEngine.from_engine_args(engine_args)
@@ -24,13 +16,19 @@ def parse_args():
 
 def main(args: argparse.Namespace):
     """Main function that sets up and runs the prompt processing."""
-
+   
     start = time.time()
     engine = initialize_engine(args)
     end = time.time()
     print(f"initialize_engine took {end - start:.2f} seconds")
+    
+    del engine
+    gc.collect()
 
 
 if __name__ == "__main__":
+    from vllm import EngineArgs, LLMEngine
+    from vllm.utils import FlexibleArgumentParser
+    
     args = parse_args()
     main(args)
