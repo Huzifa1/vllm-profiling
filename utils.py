@@ -126,12 +126,6 @@ def get_labels_matrics(json_filepath, sort_by):
     labels = json_data['labels']
     metrics = json_data['data']
         
-    # Substract torch.compile, graph_compile_cached from kv_cache_profiling
-    metrics['kv_cache_profiling'] = [
-        metrics['kv_cache_profiling'][i] - metrics['torch.compile'][i] - (metrics['graph_compile_cached'][i] if metrics['graph_compile_cached'][i] is not None else 0)
-        for i in range(len(metrics['kv_cache_profiling']))
-    ]
-    
     sort_indices = get_sort_indices(labels, sort_by)
     sorted_labels = [labels[i] for i in sort_indices]
     

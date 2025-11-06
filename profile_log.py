@@ -62,6 +62,13 @@ def main(file_name):
     with open(file_name, "r") as f:
         lines = f.readlines()
 
+    worker_init_start = None
+    worker_init_end = None
+    detect_platfrom_start = None
+    detect_platfrom_end = None
+    llm_imports_end = None
+    get_model_info_end = None
+    
     for line in lines:
         if "Loading weights took" in line:
             s = extract_time(line, r"Loading weights took ([\d.]+) seconds")
@@ -107,26 +114,35 @@ def main(file_name):
             s = extract_time(line, r"took ([\d.]+) seconds")
             profiling_results["model_init"] = s
 
-
+        
         # Now for custom logs
         if "No plugins for group" in line:
             detect_platfrom_start = extract_datetime(line)
         elif "detected platform" in line:
             detect_platfrom_end = extract_datetime(line)
-            profiling_results["detect_platfrom"] = (detect_platfrom_end - detect_platfrom_start).total_seconds()
+            if detect_platfrom_start is not None:
+                profiling_results["detect_platfrom"] = (detect_platfrom_end - detect_platfrom_start).total_seconds()
         elif "Available plugins for group" in line:
             llm_imports_end = extract_datetime(line)
-            profiling_results["llm_imports"] = (llm_imports_end - detect_platfrom_end).total_seconds()
+            if detect_platfrom_end is not None:
+                profiling_results["llm_imports"] = (llm_imports_end - detect_platfrom_end).total_seconds()
         elif "Chunked prefill is" in line:
             get_model_info_end = extract_datetime(line)
-            profiling_results["get_model_info"] = (get_model_info_end - llm_imports_end).total_seconds()
+            if llm_imports_end is not None:
+                profiling_results["get_model_info"] = (get_model_info_end - llm_imports_end).total_seconds()
         elif "Waiting for init message" in line:
             worker_init_start = extract_datetime(line)
         elif "Starting to load model" in line:
             worker_init_end = extract_datetime(line)
-            profiling_results["worker_init"] = (worker_init_end - worker_init_start).total_seconds()
+            if worker_init_start is not None:
+                profiling_results["worker_init"] = (worker_init_end - worker_init_start).total_seconds()
             
-            
+    # Fix KV cache profiling
+    # It includes torch.compile + graph_compile_cached  
+    graph_compile_cached = profiling_results["graph_compile_cached"] or 0
+    torch_compile = profiling_results["torch.compile"] or 0
+    if profiling_results["kv_cache_profiling"] is not None:
+        profiling_results["kv_cache_profiling"] -= torch_compile + graph_compile_cached
     
     # Calc actual_total_time as the difference between first and last line
     total_seconds = None
@@ -141,10 +157,11 @@ def main(file_name):
     profiling_results["actual_total_time"] = total_seconds
     
     # Calc framework_bootstrap time
-    profiling_results["framework_bootstrap"] = profiling_results["detect_platfrom"] + \
-        profiling_results["llm_imports"] + \
-        profiling_results["get_model_info"] + \
-        profiling_results["worker_init"]
+    detect_platfrom = profiling_results["detect_platfrom"] or 0
+    llm_imports = profiling_results["llm_imports"] or 0
+    get_model_info = profiling_results["get_model_info"] or 0
+    worker_init = profiling_results["worker_init"] or 0
+    profiling_results["framework_bootstrap"] = detect_platfrom + llm_imports + get_model_info + worker_init
     
     # Calculate total time
     total_time_keys = ["framework_bootstrap", "model_loading", "init_engine", "tokenizer_init"]

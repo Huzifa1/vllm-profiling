@@ -34,20 +34,8 @@ def compare_step(results1, results2, step, verbosity):
     for i, label in enumerate(results1["labels"]):
         model_name = extract_model_name(label)
 
-        
-        if step == "kv_cache_profiling":
-            # Special case: Substract torch.compile and graph_compile_cached
-            if (graph_compile_cached_time1 := results1["data"]["graph_compile_cached"][i]) is None:
-                graph_compile_cached_time1 = 0
-            value1 = results1["data"][step][i] - results1["data"]["torch.compile"][i] - graph_compile_cached_time1
-            
-            if (graph_compile_cached_time2 := results2["data"]["graph_compile_cached"][i]) is None:
-                graph_compile_cached_time2 = 0
-            value2 = results2["data"][step][i] - results2["data"]["torch.compile"][i] - graph_compile_cached_time2
-            
-        else:    
-            value1 = results1["data"][step][i]
-            value2 = results2["data"][step][i]
+        value1 = results1["data"][step][i]
+        value2 = results2["data"][step][i]
             
         speedup = value2 / value1
         sum_speedup += speedup

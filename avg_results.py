@@ -41,16 +41,8 @@ for iteration in sorted(os.listdir(iterations_dir_path)):
                 # This is important to fix actual_total_time later
                 # The idea is that total_time should be the actual sum of the avgs
                 # Then actual_total_time should be the real total_time + averaged additional time 
-                # Same applies for kv_cache_profiling
                 if key == "actual_total_time":
                     val -= content["data"]["total_time"][i]
-                    
-                if key == "kv_cache_profiling":
-                    # It could be null if this is the first time (no cache is available)
-                    if (graph_compile_cached_time := content["data"]["graph_compile_cached"][i]) is None:
-                        graph_compile_cached_time = 0
-                    if content["data"]["torch.compile"][i] is not None:
-                        val -= content["data"]["torch.compile"][i] + graph_compile_cached_time
                 
                 data_accumulator[key][i].append(val)
 
@@ -82,15 +74,13 @@ for i, value in enumerate(aggregated_mean_data["total_time"]):
     framework_bootstrap = sum_up_keys(aggregated_mean_data, i, ["detect_platfrom", "llm_imports", "get_model_info", "worker_init"])
     model_loading = sum_up_keys(aggregated_mean_data, i, ["load_weights", "model_init"])
     torch_compile = sum_up_keys(aggregated_mean_data, i, ["dynamo_transform_time", "graph_compile_general_shape"])
-    kv_cache_profiling = torch_compile + sum_up_keys(aggregated_mean_data, i, ["kv_cache_profiling", "graph_compile_cached"])
-    init_engine = kv_cache_profiling + sum_up_keys(aggregated_mean_data, i, ["graph_capturing"])
+    init_engine = torch_compile + sum_up_keys(aggregated_mean_data, i, ["kv_cache_profiling", "graph_compile_cached", "graph_capturing"])
     total_time = framework_bootstrap + model_loading + init_engine + sum_up_keys(aggregated_mean_data, i, ["tokenizer_init"])
     actual_total_time = total_time + sum_up_keys(aggregated_mean_data, i, ["actual_total_time"])
     
     aggregated_mean_data["framework_bootstrap"][i] = framework_bootstrap
     aggregated_mean_data["model_loading"][i] = model_loading
     aggregated_mean_data["torch.compile"][i] = torch_compile
-    aggregated_mean_data["kv_cache_profiling"][i] = kv_cache_profiling
     aggregated_mean_data["init_engine"][i] = init_engine
     aggregated_mean_data["total_time"][i] = total_time
     aggregated_mean_data["actual_total_time"][i] = actual_total_time

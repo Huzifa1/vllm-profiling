@@ -100,10 +100,6 @@ def parse_input(avg_comparison_results_path, models_config_path, ignore_models):
         ]
     data = results["data"]
     
-    # Update kv_cache_profiling
-    for i in range(len(data["kv_cache_profiling"])):
-        data["kv_cache_profiling"][i] -= data["torch.compile"][i] + data["graph_compile_cached"][i]
-        
     output = {
         "labels": labels,
         "data": data,
