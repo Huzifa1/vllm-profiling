@@ -8,7 +8,7 @@
         "output_model_qwen-7b_tmpfs.txt"
     ],
     "data": {
-        "detect_platfrom": [
+        "detect_platform": [
             0.0,
             0.0,
             1.0,

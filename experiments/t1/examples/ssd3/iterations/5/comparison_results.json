@@ -13,7 +13,7 @@
         "output_model_yi-9b.txt"
     ],
     "data": {
-        "detect_platfrom": [
+        "detect_platform": [
             0.545,
             0.385,
             0.389,

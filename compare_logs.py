@@ -29,7 +29,7 @@ def main():
 
 
     custom_order = [
-        "detect_platfrom",
+        "detect_platform",
         "llm_imports",
         "get_model_info",
         "worker_init",

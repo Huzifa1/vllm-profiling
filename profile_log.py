@@ -33,7 +33,7 @@ def extract_datetime(log_line):
 
 def main(file_name):
     profiling_results = {
-        "detect_platfrom": None,
+        "detect_platform": None,
         "llm_imports": None,
         "get_model_info": None,
         "worker_init": None,
@@ -64,8 +64,8 @@ def main(file_name):
 
     worker_init_start = None
     worker_init_end = None
-    detect_platfrom_start = None
-    detect_platfrom_end = None
+    detect_platform_start = None
+    detect_platform_end = None
     llm_imports_end = None
     get_model_info_end = None
     
@@ -117,15 +117,15 @@ def main(file_name):
         
         # Now for custom logs
         if "No plugins for group" in line:
-            detect_platfrom_start = extract_datetime(line)
+            detect_platform_start = extract_datetime(line)
         elif "detected platform" in line:
-            detect_platfrom_end = extract_datetime(line)
-            if detect_platfrom_start is not None:
-                profiling_results["detect_platfrom"] = (detect_platfrom_end - detect_platfrom_start).total_seconds()
+            detect_platform_end = extract_datetime(line)
+            if detect_platform_start is not None:
+                profiling_results["detect_platform"] = (detect_platform_end - detect_platform_start).total_seconds()
         elif "Available plugins for group" in line:
             llm_imports_end = extract_datetime(line)
-            if detect_platfrom_end is not None:
-                profiling_results["llm_imports"] = (llm_imports_end - detect_platfrom_end).total_seconds()
+            if detect_platform_end is not None:
+                profiling_results["llm_imports"] = (llm_imports_end - detect_platform_end).total_seconds()
         elif "Chunked prefill is" in line:
             get_model_info_end = extract_datetime(line)
             if llm_imports_end is not None:
@@ -157,11 +157,11 @@ def main(file_name):
     profiling_results["actual_total_time"] = total_seconds
     
     # Calc framework_bootstrap time
-    detect_platfrom = profiling_results["detect_platfrom"] or 0
+    detect_platform = profiling_results["detect_platform"] or 0
     llm_imports = profiling_results["llm_imports"] or 0
     get_model_info = profiling_results["get_model_info"] or 0
     worker_init = profiling_results["worker_init"] or 0
-    profiling_results["framework_bootstrap"] = detect_platfrom + llm_imports + get_model_info + worker_init
+    profiling_results["framework_bootstrap"] = detect_platform + llm_imports + get_model_info + worker_init
     
     # Calculate total time
     total_time_keys = ["framework_bootstrap", "model_loading", "init_engine", "tokenizer_init"]
@@ -193,5 +193,5 @@ if __name__ == "__main__":
         if value is None:
             print(f"{key}: None")  
         else:
-            print(f"{key}: {value:.2f} seconds")  
+            print(f"{key}: {value:.3f} seconds")  
             

@@ -1,0 +1,80 @@
+{
+    "labels": [
+        "output_model_granite4.0-h-32b_no-enable-prefix-caching_.txt",
+        "output_model_granite4.0-h-3b_no-enable-prefix-caching_.txt"
+    ],
+    "data": {
+        "detect_platform": [
+            0.034,
+            0.033
+        ],
+        "llm_imports": [
+            1.401,
+            1.416
+        ],
+        "get_model_info": [
+            4.979,
+            4.97
+        ],
+        "worker_init": [
+            3.223,
+            3.212
+        ],
+        "framework_bootstrap": [
+            9.637,
+            9.631
+        ],
+        "load_weights": [
+            8.19,
+            0.83
+        ],
+        "model_init": [
+            0.11,
+            0.09
+        ],
+        "model_loading": [
+            8.304752,
+            0.920145
+        ],
+        "dynamo_transform_time": [
+            3.28,
+            2.61
+        ],
+        "graph_compile_general_shape": [
+            null,
+            null
+        ],
+        "graph_compile_cached": [
+            3.029,
+            2.316
+        ],
+        "torch.compile": [
+            3.28,
+            2.61
+        ],
+        "kv_cache_profiling": [
+            null,
+            null
+        ],
+        "graph_capturing": [
+            null,
+            null
+        ],
+        "init_engine": [
+            null,
+            null
+        ],
+        "tokenizer_init": [
+            0.2,
+            0.19
+        ],
+        "total_time": [
+            18.141752,
+            10.741145
+        ],
+        "actual_total_time": [
+            27.444,
+            18.389
+        ]
+    }
+}

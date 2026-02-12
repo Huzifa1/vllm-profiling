@@ -9,7 +9,7 @@
         "output_model_llama3-3b_max-seq-len-to-capture_4096.txt"
     ],
     "data": {
-        "detect_platfrom": [
+        "detect_platform": [
             0.0,
             0.0,
             0.0,

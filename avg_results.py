@@ -71,7 +71,7 @@ def sum_up_keys(data, i, keys):
 # Fix keys that are usually sum up of other keys
 for i, value in enumerate(aggregated_mean_data["total_time"]):
     
-    framework_bootstrap = sum_up_keys(aggregated_mean_data, i, ["detect_platfrom", "llm_imports", "get_model_info", "worker_init"])
+    framework_bootstrap = sum_up_keys(aggregated_mean_data, i, ["detect_platform", "llm_imports", "get_model_info", "worker_init"])
     model_loading = sum_up_keys(aggregated_mean_data, i, ["load_weights", "model_init"])
     torch_compile = sum_up_keys(aggregated_mean_data, i, ["dynamo_transform_time", "graph_compile_general_shape"])
     init_engine = torch_compile + sum_up_keys(aggregated_mean_data, i, ["kv_cache_profiling", "graph_compile_cached", "graph_capturing"])

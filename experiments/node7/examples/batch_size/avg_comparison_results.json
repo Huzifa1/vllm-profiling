@@ -16,7 +16,7 @@
         "output_model_qwen-1.8b_cuda-graph-sizes_8.txt"
     ],
     "data": {
-        "detect_platfrom": [
+        "detect_platform": [
             0.2,
             0.0,
             0.0,

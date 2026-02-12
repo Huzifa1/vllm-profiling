@@ -4,7 +4,7 @@
         "output_model_qwen-4b.txt"
     ],
     "data": {
-        "detect_platfrom": [
+        "detect_platform": [
             0.037,
             0.038
         ],

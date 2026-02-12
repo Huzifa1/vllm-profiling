@@ -11,7 +11,7 @@
         "output_model_yi-9b_torch2.6.0.txt"
     ],
     "data": {
-        "detect_platfrom": [
+        "detect_platform": [
             0.0,
             0.0,
             1.0,

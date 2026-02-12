@@ -11,7 +11,7 @@
         "output_model_opt-6.7b_v0.9.0.txt"
     ],
     "data": {
-        "detect_platfrom": [
+        "detect_platform": [
             0.4,
             0.0,
             null,

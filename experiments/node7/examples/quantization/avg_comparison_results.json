@@ -10,7 +10,7 @@
         "output_model_mistral-7b.txt"
     ],
     "data": {
-        "detect_platfrom": [
+        "detect_platform": [
             0.2,
             0.0,
             0.0,

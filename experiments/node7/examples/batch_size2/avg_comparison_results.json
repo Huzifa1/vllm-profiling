@@ -9,7 +9,7 @@
         "output_model_llama2-7b-hf_cuda-graph-sizes_56.txt"
     ],
     "data": {
-        "detect_platfrom": [
+        "detect_platform": [
             0.0342,
             0.034,
             0.0342,
