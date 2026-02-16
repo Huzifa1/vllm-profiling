@@ -28,7 +28,13 @@ def main(args: argparse.Namespace):
 
 if __name__ == "__main__":
     from vllm import EngineArgs, LLMEngine
-    from vllm.utils import FlexibleArgumentParser
+    
+    # Backward-compatible import
+    try:
+        from vllm.utils import FlexibleArgumentParser
+    except ImportError:
+        # Fallback for older vLLM versions
+        FlexibleArgumentParser = argparse.ArgumentParser
     
     args = parse_args()
     main(args)

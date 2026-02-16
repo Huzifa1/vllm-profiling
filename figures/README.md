@@ -6,19 +6,9 @@ git clone https://github.com/Huzifa1/vllm-profiling.git
 cd vllm-profiling
 ```
 
-2) Install vllm with same version as the paper:
+2) Install dependencies:
 ```bash
-# Note that you need Python version 3.9 to 3.12.
-# tensorize and runai are for different loading formats (Figure 13)
-pip install "vllm[tensorizer,runai]==0.10.1.1"
-# Any version <=4.57.3
-pip install transformers==4.57.3
-
-pip install matplotlib
-# Important to run Hybrid models (e.g., granite models)
-pip install flashinfer-python
-
-pip install scikit-learn
+pip install -r requirements.txt
 ```
 
 3) Apply custom vllm changes (addition of profiling logs):
@@ -56,30 +46,43 @@ python3 download_models.py <hf_token>
 
 ## Reproduce Figures
 
-Note that even with identical environments, the results may still encounter +-5% variations
+Note that even with identical environments, the results may still encounter small variations
 
 In order to reproduce any figure:
 ```bash
 cd figures
 bash run_figure.sh <num>
 ```
-Where `<num>` is one of the following: '1', '2', '3-8', '7', '9', '10', '11', '12', '13', '14', '15', '17'.
+Where `<num>` is one of the following: '1', '2', '7', '9', '10', '11', '12', '13', '14', '15', '17', 'rest'.
+Where "rest" include Figures 3, 4, 5, 6, 8 and 17
 
-You will find the figure in `figures/figure<num>/figure<num>.pdf`
+You will find the figure in `figures/figure-<num>/figure<num>.pdf`
 
 ### Important Notes
 
-- Figures 3 to 8 (except 7) can all be generated with one experiment, therefore they are grouped as '3-8'
-- Figure 10 requires running the experiemnts on 2 different GPUs. 
-    - If you have 2 GPUs on the same machine, then you can do this by setting the environment variable `CUDA_VISIBLE_DEVICES` before running the `run_figure.sh` script. For example:
+- Figure 1 is a little bit tricky. In order to reproduce, we have to install vllm in different versions. In order to manage this, we will use python virtual environment and create a new environment for every version.
+- Figure 10 requires running the experiments on 2 different GPUs. 
+    - If you have 2 GPUs on the same machine, then you can do this by setting the environment variable `CUDA_VISIBLE_DEVICES` before running the `run_figure.sh` script. You also need to pass the index of the GPU to the script. For example:
         ```bash
         # Run on first GPU
-        CUDA_VISIBLE_DEVICES="0" bash run_figure.sh 10
+        CUDA_VISIBLE_DEVICES="0" bash run_figure.sh 10 0
         # Run on second GPU
-        CUDA_VISIBLE_DEVICES="1" bash run_figure.sh 10
+        CUDA_VISIBLE_DEVICES="1" bash run_figure.sh 10 1
         ```
-    - If you have 2 GPUs on different machines, then you can run the command `bash run_figure.sh 10` on each machine, then you need to move the output files of the second machine (e.g. `iterations`, `uncached` and `avg_comparison_results.json` files) to `./figures/figure10/gpu1`. Then to plot the figure, you can simply run:
-        ```bash
-        python3 figures/figure10/plot.py
-        ```
+    - If you have 2 GPUs on different machines, then:
+        - Run the command `bash run_figure.sh 10 0` on the first machine.
+        - Run the command `bash run_figure.sh 10 1` on the second machine.
+        - Move the output files from the second machine (e.g. `./figures/figure-10/gpu1`) to the same path in the first machine.
+        - Then to plot the figure, you can simply run `python3 figures/figure-10/plot.py`
+    
+- Figure 11 follows a similar path to Figure 10. It requires running the experiments on 2 different CPUs.
+    - You should first run the first experiment on the first machine using this command: `bash run_figure.sh 11 0`
+    - Then do the same thing on the second machine: `bash run_figure.sh 11 1`
+    - Now move the output files from the second machine (e.g. `./figures/figure-11/cpu1`) to the same path in the first machine
+    - Then to plot the figure, you can simply run `python3 figures/figure-11/plot.py`
+- Again, for Figure 13, it's the same process as before:
+    - First run the experiments on the first machine: `bash run_figure.sh 13 0`. This will represent the case where all weights are retrieved from RAM.
+    - Then run the experiments on the second machine: `bash run_figure.sh 13 1`. This will represent the case where all weights are retrieved from the SSD. However, note that now we have clear RAM memory after each run. To do so, the script will automatically run the following command: `sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'`, which requires sudo access. **NOTE: This might affect other running processes. Therefore, it's better to run this command alone.**
+    - Now move the output files from the second machine (e.g. `./figures/figure-13/case1`) to the same path in the first machine
+    - Then to plot the figure, you can simply run `python3 figures/figure-13/plot.py`
 

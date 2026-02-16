@@ -30,7 +30,8 @@ def create_test_data(avg_comparison_results, models_config, validation_models, o
         
         entry = {
             "label": model_name,
-            "time": results["data"]["actual_total_time"][i]
+            "time": results["data"]["actual_total_time"][i],
+            "batch_size": 1
         }
         
         # Now add all models_config parameters to entry

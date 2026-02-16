@@ -13,6 +13,7 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import scipy.stats as stats
 import numpy as np
 import os
+from compare_2_avgs import compare_files
 
 script_dir = Path(__file__).parent
 
@@ -303,6 +304,71 @@ def draw(model_names_map, iterations_path, sort_by, metric1, metric2, xlabel, yl
 
     plt.savefig(
         f"{filename}.pdf",
+        format="pdf",
+        bbox_inches="tight",
+        transparent=True
+    )
+    plt.show()
+    
+def compare_2_archs(filepath1, filepath2, verbosity, title, pdf_name, custom_bars=None):
+    
+    if not os.path.exists(filepath1):
+        print(f"File {filepath1} does not exist")
+        return
+    
+    if not os.path.exists(filepath2):
+        print(f"File {filepath2} does not exist")
+        return
+        
+    steps_map = {
+        "framework_bootstrap": "Framework Bootstrap",
+        "tokenizer_init": "Tokenizer Init",
+        "model_init": "Model Init",
+        "load_weights": "Load Weights",
+        "dynamo_transform_time": "Dynamo Transform",
+        "graph_compile_cached": "Load Compiled Graphs",
+        "kv_cache_profiling": "KV Cache Profiling",
+        "graph_capturing": "Graph Capturing",
+        "actual_total_time": "Total Time",
+    }
+    
+    output_results = compare_files(filepath1, filepath2, verbosity)
+    if custom_bars:
+        for key,values in custom_bars.items():
+            output_results[key] = values
+            
+    # Order output_results based on steps_map order
+    output_results = {k: output_results[k] for k in steps_map.keys() if k in output_results}
+
+    steps = list(output_results.keys())
+    avg_speedups = []
+    stderr_speedups = []
+    xticklabels = []
+    colors = []
+    for step in steps:
+        if step in steps_map:
+            speedups = [entry["speedup"] for entry in output_results[step]]
+            avg_speedups.append(np.mean(speedups))
+            stderr_speedups.append(stats.sem(speedups))
+            xticklabels.append(steps_map[step])
+            # Make the last bar (Total Time) red, others blue
+            colors.append('#666666' if steps_map[step] == 'Total Time' else '#1f77b4')
+
+    x = np.arange(len(xticklabels))
+    fig, ax = plt.subplots(figsize=(8, 5))
+    bars = ax.bar(x, avg_speedups, yerr=stderr_speedups, capsize=10, color=colors, ecolor='black')
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(xticklabels, rotation=30, ha='right', fontsize=13)
+    ax.set_ylabel(title, fontsize=15)
+
+    # Annotate each bar with its value
+    for bar, value in zip(bars, avg_speedups):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() / 2, f"{value:.2f}", ha='center', va='bottom', fontsize=10, color='white')
+
+    plt.tight_layout()
+    plt.savefig(
+        pdf_name,
         format="pdf",
         bbox_inches="tight",
         transparent=True
