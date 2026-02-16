@@ -53,8 +53,8 @@ In order to reproduce any figure:
 cd figures
 bash run_figure.sh <num>
 ```
-Where `<num>` is one of the following: '1', '2', '7', '9', '10', '11', '12', '13', '14', '15', '17', 'rest'.
-Where "rest" include Figures 3, 4, 5, 6, 8 and 17
+Where `<num>` is one of the following: `1`, `2`, `7`, `9`, `10`, `11`, `12`, `13`, `14`, `15`, `17`, `rest`.
+Where `rest` include Figures 3, 4, 5, 6, 8 and 17
 
 You will find the figure in `figures/figure-<num>/figure<num>.pdf`
 
@@ -63,6 +63,7 @@ You will find the figure in `figures/figure-<num>/figure<num>.pdf`
 - Figure 1 is a little bit tricky. In order to reproduce, we have to install vllm in different versions. In order to manage this, we will use python virtual environment and create a new environment for every version.
 - Figure 10 requires running the experiments on 2 different GPUs. 
     - If you have 2 GPUs on the same machine, then you can do this by setting the environment variable `CUDA_VISIBLE_DEVICES` before running the `run_figure.sh` script. You also need to pass the index of the GPU to the script. For example:
+    
         ```bash
         # Run on first GPU
         CUDA_VISIBLE_DEVICES="0" bash run_figure.sh 10 0
