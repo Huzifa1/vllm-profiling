@@ -6,6 +6,15 @@ import json
 import re
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from pathlib import Path
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+import scipy.stats as stats
+import numpy as np
+import os
+
+script_dir = Path(__file__).parent
 
 def clear_cache():
     # Clear cache and reset memory stats
@@ -33,7 +42,7 @@ def extract_label_value(label, key):
 
 def get_model_info(label, key): 
     model_name = extract_model_name(label)
-    with open("../../models_config.json", "r") as f:
+    with open(script_dir / "models_config.json", "r") as f:
         info = json.load(f)
     
     return info[model_name].get(key, 0)
@@ -130,6 +139,176 @@ def get_labels_matrics(json_filepath, sort_by):
     sorted_labels = [labels[i] for i in sort_indices]
     
     return metrics, sorted_labels, sort_indices
+
+# Helper function
+def draw(model_names_map, iterations_path, sort_by, metric1, metric2, xlabel, ylabel, x2label, y2label, ylim_multiplier, filename, func=None, excluded_labels=[]):
+    # Color Map for each model:
+
+    cbf_colors = [
+        "#4477AA", "#66CCEE", "#228833", "#44AA99", "#117733",
+        "#999933", "#DDCC77", "#CC6677", "#882255", "#AA4499",
+        "#332288", "#EE7733", "#BBBBBB", "#77AADD", "#EEDD88",
+        "#FFAABB", "#99DDFF", "#55CC77", "#FFDD44", "#AA3377",
+        "#1177AA", "#66AA77", "#CCBB44", "#BB5566", "#DDDDDD"
+    ]
+
+    models = [
+        'qwen-0.5b', 'qwen-1.8b', 'qwen-4b', 'qwen-7b', 'qwen-14b',
+        'qwen-14.3b', 'llama2-7b-hf', 'llama2-13b-hf', 'llama3-3b', 'llama3.1-8b-instruct',
+        'falcon-7b', 'falcon-11b', 'yi-6b', 'yi-9b', 'mpt-7b',
+        'mistral-7b', 'gemma-7b', 'gpt-oss-20b', 'deepseek-v2-lite-16b', 'deepseek-r1-distill-llama-8b',
+        'deepseek-r1-distill-qwen-7b', 'granite3.3-8b-instruct', 'granite4.0-h-3b', 'granite4.0-h-32b', 'olmoe-7b'
+    ]
+
+    color_map = {model: cbf_colors[i % len(cbf_colors)] for i, model in enumerate(models)}
+
+    all_values = []
+    labels = []
+    matric2_values = []
+    colors = []
+
+    for i, iter_dir in enumerate(os.listdir(iterations_path)):
+        json_filepath = os.path.join(iterations_path, iter_dir, "comparison_results.json")
+
+        metrics, sorted_labels, sort_indices = get_labels_matrics(json_filepath, sort_by)
+        metric_values = [metrics[metric1][sort_indices[i]] for i in range(len(sorted_labels))]
+        model_names = [extract_model_name(label) for label in sorted_labels]
+        if func:
+            model_metric_nb = [func(label) for label in sorted_labels]
+        else:
+            model_metric_nb = [get_model_info(label, metric2) for label in sorted_labels]
+
+        # Now sort the values and model names based on the number of metric
+        sorted_indices = sorted(range(len(model_metric_nb)), key=lambda i: model_metric_nb[i])
+        metric_values_sorted = [metric_values[i] for i in sorted_indices]
+        model_names_sorted = [model_names[i] for i in sorted_indices]
+        model_metric_nb_sorted = [model_metric_nb[i] for i in sorted_indices]
+
+        values = []
+        for j, model_name in enumerate(model_names_sorted):
+            if model_name in model_names_map:
+                values.append(metric_values_sorted[j])
+                if i == 0:
+                    matric2_values.append(model_metric_nb_sorted[j])
+                    labels.append(model_names_map[model_name])
+                    
+                    # Get colors from the color map using the "labels"
+                    colors.append(color_map[model_name])
+                
+        all_values.append(values)
+        
+        
+    # Compute mean and standard error for each bar
+    all_values_np = np.array(all_values)  # shape: (num_runs, num_models)
+    means = np.mean(all_values_np, axis=0)
+    stderrs = stats.sem(all_values_np, axis=0)
+    
+    if len(model_names_map.keys()) < 2:
+        colors = [cbf_colors[i] for i in range(len(labels))]
+
+
+    # Main bar chart with error bars
+    fig, ax = plt.subplots(figsize=(7, 5))
+    bars = ax.bar(
+        [f"{label} ({matric2_values[i]})" for i, label in enumerate(labels)],
+        means,
+        yerr=stderrs,
+        capsize=10,
+        color=colors,
+        ecolor='black'
+    )
+    ax.set_xlabel(xlabel, fontsize=14)
+    ax.set_ylabel(ylabel, fontsize=14)
+    ax.set_xticks(range(len(labels)))
+    
+    xtick_labels = []
+    rotation = 30
+    if metric2 != "size":
+        xtick_labels = [f"{label} ({matric2_values[i]})" for i, label in enumerate(labels)]
+    else:
+        xtick_labels = labels
+    
+    if func and metric1 != "kv_cache_profiling":
+        xtick_labels = matric2_values
+        rotation = 0
+    
+    ax.set_xticklabels(xtick_labels, rotation=rotation, ha='right', fontsize=13)
+    ax.set_ylim(0, max(means + stderrs) * ylim_multiplier)
+    
+    # Add value of each bar on top
+    for bar, value in zip(bars, means):
+        text_height = bar.get_height() / 2
+        if bar.get_height() < 0.15 * max(means + stderrs):
+            text_height = (bar.get_height() / 2) - 0.02 * max(means + stderrs)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            text_height,
+            f"{value:.2f}",
+            ha='center',
+            va='bottom',
+            fontsize=11,
+            color='white',
+        )
+        
+    # --- Inset plot with excluded points ---
+    ax_inset = inset_axes(
+        ax, width="30%", height="30%", 
+        loc='upper left', 
+        bbox_to_anchor=(0.1, -0.04, 1, 1), 
+        bbox_transform=ax.transAxes
+    )
+
+    X = np.array(matric2_values).reshape(-1, 1)
+    y = means
+
+    # Exclude selected points before fitting
+    mask = np.array([lbl not in excluded_labels for lbl in labels])
+    X_fit = X[mask]
+    y_fit = y[mask]
+
+    reg = LinearRegression()
+    reg.fit(X_fit, y_fit)
+    y_pred = reg.predict(X)
+
+    # Scatter + regression line
+    for i in range(len(matric2_values)):
+        ax_inset.scatter(matric2_values[i], means[i], color=colors[i], s=15)
+    ax_inset.plot(X, y_pred, color='black', linestyle='--', linewidth=1)
+
+    ax_inset.set_xlabel(x2label, fontsize=10)
+    ax_inset.set_ylabel(y2label, fontsize=10)
+    ax_inset.tick_params(axis='both', which='major', labelsize=8)
+    
+    # --- Pearson Correlation Coefficient ---
+    mask = np.array([lbl not in excluded_labels for lbl in labels])
+    X_flat = np.array(matric2_values)[mask]
+    y_flat = np.array(means)[mask]
+
+    pcc, _ = stats.pearsonr(X_flat, y_flat)
+    
+    ax.text(
+        0.6, 0.95,
+        f"PCC = {pcc:.2f}",
+        transform=ax.transAxes,
+        ha='center',
+        va='top',
+        fontsize=12,
+        bbox=dict(
+            boxstyle="round,pad=0.3",
+            facecolor="white",
+            edgecolor="black",
+            alpha=0.9
+        )
+    )
+
+    plt.savefig(
+        f"{filename}.pdf",
+        format="pdf",
+        bbox_inches="tight",
+        transparent=True
+    )
+    plt.show()
+    
 
 def draw_graph(json_file_path, sort_by, included_keys=None):
     

@@ -9,13 +9,16 @@ cd vllm-profiling
 2) Install vllm with same version as the paper:
 ```bash
 # Note that you need Python version 3.9 to 3.12.
-pip install vllm==0.10.1.1
+# tensorize and runai are for different loading formats (Figure 13)
+pip install "vllm[tensorizer,runai]==0.10.1.1"
 # Any version <=4.57.3
 pip install transformers==4.57.3
 
 pip install matplotlib
 # Important to run Hybrid models (e.g., granite models)
 pip install flashinfer-python
+
+pip install scikit-learn
 ```
 
 3) Apply custom vllm changes (addition of profiling logs):
@@ -23,7 +26,7 @@ pip install flashinfer-python
 python3 apply_vllm_changes.py
 ```
 
-4) Download all models used in our experiments. This will download 23 LLMs. This will need around 0.5TB of disk space.
+4) Download all models used in our experiments. This will download multiple LLMs. This will need around 600GB of disk space.
 ```bash
 python3 download_models.py <hf_token>
 # `<hf_token>` is your HuggingFace token. Note that some models require applying to access before downloading.
@@ -60,7 +63,23 @@ In order to reproduce any figure:
 cd figures
 bash run_figure.sh <num>
 ```
-Where `<num>` is one of the following: '1', '2', '3-8', '9', '10', '11', '12', '13', '14', '16'.
+Where `<num>` is one of the following: '1', '2', '3-8', '7', '9', '10', '11', '12', '13', '14', '15', '17'.
 
 You will find the figure in `figures/figure<num>/figure<num>.pdf`
+
+### Important Notes
+
+- Figures 3 to 8 (except 7) can all be generated with one experiment, therefore they are grouped as '3-8'
+- Figure 10 requires running the experiemnts on 2 different GPUs. 
+    - If you have 2 GPUs on the same machine, then you can do this by setting the environment variable `CUDA_VISIBLE_DEVICES` before running the `run_figure.sh` script. For example:
+        ```bash
+        # Run on first GPU
+        CUDA_VISIBLE_DEVICES="0" bash run_figure.sh 10
+        # Run on second GPU
+        CUDA_VISIBLE_DEVICES="1" bash run_figure.sh 10
+        ```
+    - If you have 2 GPUs on different machines, then you can run the command `bash run_figure.sh 10` on each machine, then you need to move the output files of the second machine (e.g. `iterations`, `uncached` and `avg_comparison_results.json` files) to `./figures/figure10/gpu1`. Then to plot the figure, you can simply run:
+        ```bash
+        python3 figures/figure10/plot.py
+        ```
 
