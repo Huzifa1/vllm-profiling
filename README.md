@@ -127,3 +127,21 @@ python3 predictor/run_predictor.py --models_path MODELS_PATH --test_data_path TE
 - `MODELS_PATH`: Path to model predictors created during step 3.
 - `TEST_DATA_PATH`: Path to `test_data.json` created during step 4.
 - `verbose`: Optional flag to print the output to the CLI.
+
+## Reproducibility
+
+In order to reproduce all the figures in our paper (e.g., Artifact Evaluation), we have prepared a separate documentation [here](./figures/README.md)
+
+## Citation
+
+If you are planning to use our work, please cite our paper:
+
+```bib
+@inproceedings{kabakibo2026breaking,
+  title     = {Breaking the Ice: Analyzing Cold Start Latency in vLLM},
+  author    = {Huzaifa Shaaban Kabakibo and Animesh Trivedi and Lin Wang},
+  booktitle = {Proceedings of the 9th Conference on Machine Learning and Systems (MLSys)},
+  year      = {2026},
+  note      = {Accepted, to appear}
+}
+```
